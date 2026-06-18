@@ -18,7 +18,7 @@ dist-ssr
 *.local
 
 # Environment variables (contains secrets)
-
+.env
 
 # Netlify (build output)
 .netlify/
