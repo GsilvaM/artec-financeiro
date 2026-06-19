@@ -170,7 +170,7 @@ function LancamentosPage() {
                 <Plus className="mr-1.5 h-4 w-4" /> Novo
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg w-[95vw] sm:w-full">
+            <DialogContent key={form.id || "novo"} className="max-w-lg w-[95vw] sm:w-full">
               <DialogHeader>
                 <DialogTitle className="text-primary">
                   {editando ? "Editar lançamento" : "Novo lançamento"}
