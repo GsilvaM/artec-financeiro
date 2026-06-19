@@ -95,7 +95,7 @@ function RelatoriosPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4 lg:grid-cols-5">
         <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
           <CardContent className="flex items-center gap-2 p-2 sm:gap-4 sm:p-5">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#215797]/10 text-[#215797] sm:h-11 sm:w-11">
@@ -194,13 +194,13 @@ function RelatoriosPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Data</TableHead>
-                <TableHead>Tipo</TableHead>
+                <TableHead className="text-xs sm:text-sm">Data</TableHead>
+                <TableHead className="hidden max-sm:hidden sm:table-cell">Tipo</TableHead>
                 <TableHead className="hidden sm:table-cell">Categoria</TableHead>
-                <TableHead>Descrição</TableHead>
+                <TableHead className="text-xs sm:text-sm">Descrição</TableHead>
                 <TableHead className="hidden sm:table-cell">Cliente/Fornecedor</TableHead>
-                <TableHead className="text-right">Valor</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead className="text-right text-xs sm:text-sm">Valor</TableHead>
+                <TableHead className="hidden max-sm:hidden">Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -216,18 +216,27 @@ function RelatoriosPage() {
               )}
               {filtrados.map((l) => (
                 <TableRow key={l.id}>
-                  <TableCell className="font-medium whitespace-nowrap">
+                  <TableCell className="font-medium whitespace-nowrap text-xs sm:text-sm p-2 sm:p-3">
                     {new Date(l.data + "T00:00:00").toLocaleDateString("pt-BR")}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap">{TIPO_LABEL[l.tipo]}</TableCell>
+                  <TableCell className="hidden max-sm:hidden sm:table-cell whitespace-nowrap text-xs sm:text-sm">{TIPO_LABEL[l.tipo]}</TableCell>
                   <TableCell className="hidden sm:table-cell whitespace-nowrap">{l.categoria}</TableCell>
-                  <TableCell className="max-w-[120px] truncate sm:max-w-none">{l.descricao}</TableCell>
+                  <TableCell className="max-w-[100px] truncate text-xs sm:text-sm sm:max-w-none p-2 sm:p-3">
+                    <span className="flex items-center gap-1.5">
+                      <span className={`h-1.5 w-1.5 shrink-0 rounded-full sm:hidden ${
+                        l.status === "pendente" ? "bg-amber-400" :
+                        l.status === "pago" || l.status === "recebido" ? "bg-emerald-400" :
+                        "bg-gray-400"
+                      }`} />
+                      {l.descricao}
+                    </span>
+                  </TableCell>
                   <TableCell className="hidden sm:table-cell whitespace-nowrap">{l.contraparte}</TableCell>
-                  <TableCell className="text-right font-semibold tabular-nums whitespace-nowrap">
+                  <TableCell className="text-right font-semibold tabular-nums whitespace-nowrap text-xs sm:text-sm p-2 sm:p-3">
                     {fmtBRL(l.valor)}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    <Badge variant={l.status === "pendente" ? "secondary" : "default"}>
+                  <TableCell className="hidden max-sm:hidden whitespace-nowrap">
+                    <Badge variant={l.status === "pendente" ? "secondary" : "default"} className="text-xs">
                       {STATUS_LABEL[l.status]}
                     </Badge>
                   </TableCell>

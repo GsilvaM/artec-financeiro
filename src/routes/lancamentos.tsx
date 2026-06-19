@@ -303,14 +303,14 @@ function LancamentosPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Data</TableHead>
-                <TableHead>Tipo</TableHead>
+                <TableHead className="text-xs sm:text-sm">Data</TableHead>
+                <TableHead className="hidden max-sm:hidden sm:table-cell">Tipo</TableHead>
                 <TableHead className="hidden sm:table-cell">Categoria</TableHead>
-                <TableHead>Descrição</TableHead>
+                <TableHead className="text-xs sm:text-sm">Descrição</TableHead>
                 <TableHead className="hidden sm:table-cell">Cliente/Fornecedor</TableHead>
-                <TableHead className="text-right">Valor</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="w-20" />
+                <TableHead className="text-right text-xs sm:text-sm">Valor</TableHead>
+                <TableHead className="hidden max-sm:hidden">Status</TableHead>
+                <TableHead className="w-16 sm:w-20" />
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -326,26 +326,34 @@ function LancamentosPage() {
               )}
               {filtrados.map((l) => (
                 <TableRow key={l.id}>
-                  <TableCell className="font-medium whitespace-nowrap">
+                  <TableCell className="font-medium whitespace-nowrap text-xs sm:text-sm p-2 sm:p-3">
                     {new Date(l.data + "T00:00:00").toLocaleDateString("pt-BR")}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap">{TIPO_LABEL[l.tipo]}</TableCell>
+                  <TableCell className="hidden max-sm:hidden sm:table-cell whitespace-nowrap text-xs sm:text-sm">{TIPO_LABEL[l.tipo]}</TableCell>
                   <TableCell className="hidden sm:table-cell whitespace-nowrap">{l.categoria}</TableCell>
-                  <TableCell className="max-w-[120px] truncate sm:max-w-none">{l.descricao}</TableCell>
+                  <TableCell className="max-w-[100px] truncate text-xs sm:text-sm sm:max-w-none p-2 sm:p-3">
+                    <span className="sm:hidden">{l.descricao}</span>
+                    <span className="hidden sm:inline">{l.descricao}</span>
+                  </TableCell>
                   <TableCell className="hidden sm:table-cell whitespace-nowrap">{l.contraparte}</TableCell>
-                  <TableCell className="text-right font-semibold tabular-nums whitespace-nowrap">
+                  <TableCell className="text-right font-semibold tabular-nums whitespace-nowrap text-xs sm:text-sm p-2 sm:p-3">
                     {fmtBRL(l.valor)}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    <Badge variant={statusVariant(l.status)}>{STATUS_LABEL[l.status]}</Badge>
+                  <TableCell className="hidden max-sm:hidden whitespace-nowrap">
+                    <Badge variant={statusVariant(l.status)} className="text-xs">{STATUS_LABEL[l.status]}</Badge>
                   </TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    <div className="flex justify-end gap-0.5 sm:gap-1">
-                      <Button size="icon" variant="ghost" onClick={() => editar(l)} className="h-8 w-8 sm:h-9 sm:w-9">
-                        <Pencil className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <TableCell className="whitespace-nowrap p-1 sm:p-3">
+                    <div className="flex items-center gap-1 sm:gap-1.5">
+                      <div className={`h-2 w-2 shrink-0 rounded-full sm:hidden ${
+                        l.status === "pendente" ? "bg-amber-400" :
+                        l.status === "pago" || l.status === "recebido" ? "bg-emerald-400" :
+                        "bg-gray-400"
+                      }`} title={STATUS_LABEL[l.status]} />
+                      <Button size="icon" variant="ghost" onClick={() => editar(l)} className="h-7 w-7 sm:h-9 sm:w-9">
+                        <Pencil className="h-3 w-3 sm:h-4 sm:w-4" />
                       </Button>
-                      <Button size="icon" variant="ghost" onClick={() => excluir(l.id)} className="h-8 w-8 sm:h-9 sm:w-9">
-                        <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      <Button size="icon" variant="ghost" onClick={() => excluir(l.id)} className="h-7 w-7 sm:h-9 sm:w-9">
+                        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                       </Button>
                     </div>
                   </TableCell>
