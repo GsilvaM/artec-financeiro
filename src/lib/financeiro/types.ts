@@ -2,6 +2,7 @@ export type TipoLancamento =
   | "receita"
   | "custo_direto"
   | "despesa_operacional"
+  | "deducao"
   | "receita_financeira"
   | "despesa_financeira";
 
@@ -31,6 +32,7 @@ export const TIPO_LABEL: Record<TipoLancamento, string> = {
   receita: "Receita",
   custo_direto: "Custo Direto",
   despesa_operacional: "Despesa Operacional",
+  deducao: "Deduções",
   receita_financeira: "Receita Financeira",
   despesa_financeira: "Despesa Financeira",
 };

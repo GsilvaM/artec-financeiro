@@ -270,6 +270,16 @@ export async function replaceAllPermissoes(items: Permissao[]): Promise<void> {
 // ─── Seed ──────────────────────────────────────────────────
 
 export async function seedIfEmpty(): Promise<void> {
+  const { count: catCount, error: catErr } = await db()
+    .from("categorias")
+    .select("*", { count: "exact", head: true });
+
+  if (catErr) throw catErr;
+
+  if (catCount !== null && catCount === 0) {
+    await replaceAllCategorias(CATEGORIAS_INICIAIS);
+  }
+
   const { count: lancCount, error: lancErr } = await db()
     .from("lancamentos")
     .select("*", { count: "exact", head: true });
@@ -278,14 +288,5 @@ export async function seedIfEmpty(): Promise<void> {
 
   if (lancCount !== null && lancCount > 0) return;
 
-  const { count: catCount, error: catErr } = await db()
-    .from("categorias")
-    .select("*", { count: "exact", head: true });
-
-  if (catErr) throw catErr;
-
-  if (catCount !== null && catCount > 0) return;
-
-  await replaceAllCategorias(CATEGORIAS_INICIAIS);
   await replaceAllLancamentos(LANCAMENTOS_SEED);
 }

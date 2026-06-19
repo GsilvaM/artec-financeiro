@@ -2,7 +2,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { TrendingUp, TrendingDown, DollarSign, BarChart3 } from "lucide-react";
 import { useLancamentos } from "@/lib/financeiro/storage";
-import { calcularDRE, fmtBRL } from "@/lib/financeiro/calc";
+import { calcularDRE, fmtBRL, MESES } from "@/lib/financeiro/calc";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 export const Route = createFileRoute("/fluxo-caixa")({
   head: () => ({ meta: [{ title: "Fluxo de Caixa — Artec Financeiro" }] }),
@@ -15,6 +24,39 @@ function FluxoCaixaPage() {
 
   const saldoOperacional = dre.receitaBruta - dre.custosDir - dre.despesasOp;
   const saldoPeriodo = dre.lucroLiquido;
+
+  const dadosMensais = useMemo(() => {
+    const anoAtual = new Date().getFullYear();
+    return MESES.map((nome, i) => {
+      const sub = lancs.filter((l) => {
+        const d = new Date(l.data + "T00:00:00");
+        return d.getFullYear() === anoAtual && d.getMonth() === i;
+      });
+      const d = calcularDRE(sub);
+      return {
+        mes: nome.slice(0, 3),
+        Entradas: d.receitaBruta + d.receitasFin,
+        Saidas: d.custosDir + d.despesasOp + d.despesasFin,
+        Saldo: d.lucroLiquido,
+      };
+    });
+  }, [lancs]);
+
+  function TooltipContent({ active, payload, label }: any) {
+    if (active && payload && payload.length) {
+      return (
+        <div className="chart-tooltip">
+          <p className="text-xs font-semibold text-gray-700 mb-1">{label}</p>
+          {payload.map((entry: any, idx: number) => (
+            <p key={idx} className="text-xs" style={{ color: entry.color }}>
+              {entry.name}: {fmtBRL(entry.value)}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  }
 
   return (
     <div className="space-y-6">
@@ -44,7 +86,7 @@ function FluxoCaixaPage() {
               <DollarSign className="h-4 w-4" style={{ color: "#215797" }} />
             </div>
           </div>
-          <div className="kpi-value" style={{ color: dre.receitaBruta >= 0 ? "#215797" : "#EF4444" }}>{fmtBRL(dre.receitaBruta)}</div>
+          <div className="kpi-value" style={{ color: dre.receitaBruta >= 0 ? "#215797" : "#EF4444" }}>{fmtBRL(dre.receitaBruta + dre.receitasFin)}</div>
           <div className="kpi-label">Entradas</div>
         </div>
         <div className="card-artec p-4">
@@ -67,10 +109,23 @@ function FluxoCaixaPage() {
         </div>
       </div>
 
-      <div className="card-artec-static p-6 text-center">
-        <BarChart3 className="h-12 w-12 mx-auto text-[#9CA3AF] mb-3" />
-        <p className="text-[#4B5563] font-medium">Gráfico detalhado em breve</p>
-        <p className="text-sm text-[#9CA3AF] mt-1">O gráfico de fluxo de caixa mensal será exibido aqui</p>
+      <div className="card-artec-static p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-base font-semibold text-[#1F2937]">Fluxo de Caixa Mensal</h3>
+          <span className="text-xs text-[#9CA3AF]">Entradas vs Saídas</span>
+        </div>
+        <div className="h-72">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={dadosMensais} barCategoryGap="20%">
+              <CartesianGrid strokeDasharray="3 3" opacity={0.3} stroke="#E5E7EB" vertical={false} />
+              <XAxis dataKey="mes" fontSize={12} tick={{ fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <YAxis fontSize={12} tick={{ fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+              <Tooltip content={<TooltipContent />} />
+              <Bar dataKey="Entradas" fill="#10B981" radius={[6, 6, 0, 0]} maxBarSize={32} />
+              <Bar dataKey="Saidas" fill="#EF4444" radius={[6, 6, 0, 0]} maxBarSize={32} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );

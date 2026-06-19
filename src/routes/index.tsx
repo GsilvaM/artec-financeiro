@@ -11,6 +11,7 @@ import {
   Users,
 } from "lucide-react";
 import { useLancamentos } from "@/lib/financeiro/storage";
+import { useTecnicos, useServicos, useMetas } from "@/lib/financeiro/crud-storage";
 import {
   anosDisponiveis,
   calcularDRE,
@@ -53,7 +54,7 @@ export const Route = createFileRoute("/")({
 
 const CHART_COLORS = ["#215797", "#6B2FD6", "#10B981", "#F59E0B", "#EF4444"];
 
-const META_MENSAL = 85000;
+const META_FALLBACK = 85000;
 
 interface KpiCardProps {
   label: string;
@@ -88,6 +89,9 @@ function KpiCard({ label, value, hint, icon, color, trend }: KpiCardProps) {
 
 function Dashboard() {
   const [lancs] = useLancamentos();
+  const { items: tecnicos } = useTecnicos();
+  const { items: servicos } = useServicos();
+  const { items: metas } = useMetas();
   const anos = anosDisponiveis(lancs);
   const [ano, setAno] = useState<number | "todos">(anos[0] ?? new Date().getFullYear());
   const [mes, setMes] = useState<number | "todos">("todos");
@@ -97,6 +101,12 @@ function Dashboard() {
 
   const mesAtual = new Date().getMonth();
   const anoAtual = new Date().getFullYear();
+
+  const periodoMeta = `${ano === "todos" ? anoAtual : ano}-${String(mes === "todos" ? mesAtual + 1 : mes).padStart(2, "0")}`;
+  const META_MENSAL = useMemo(() => {
+    const match = metas.filter((m) => m.periodo === periodoMeta);
+    return match.reduce((s, m) => s + m.valorMeta, 0) || META_FALLBACK;
+  }, [metas, periodoMeta]);
 
   const dadosMensais = useMemo(() => {
     const anoRef = ano === "todos" ? anoAtual : ano;
@@ -391,15 +401,29 @@ function Dashboard() {
             </div>
             <h3 className="text-base font-semibold text-[#1F2937]">Produtividade</h3>
           </div>
-          <div className="h-52">
+          <div className="flex gap-3 mb-3">
+            <div className="flex-1 bg-[#6B2FD6]/5 rounded-lg p-2.5 text-center">
+              <div className="text-lg font-bold text-[#6B2FD6]">{tecnicos.filter((t) => t.ativo).length}</div>
+              <div className="text-[10px] text-[#9CA3AF]">Técnicos Ativos</div>
+            </div>
+            <div className="flex-1 bg-[#215797]/5 rounded-lg p-2.5 text-center">
+              <div className="text-lg font-bold text-[#215797]">{servicos.filter((s) => s.status === "concluido").length}</div>
+              <div className="text-[10px] text-[#9CA3AF]">Serviços Realizados</div>
+            </div>
+            <div className="flex-1 bg-[#F59E0B]/5 rounded-lg p-2.5 text-center">
+              <div className="text-lg font-bold text-[#F59E0B]">{servicos.filter((s) => s.status === "em_andamento").length}</div>
+              <div className="text-[10px] text-[#9CA3AF]">Em Andamento</div>
+            </div>
+          </div>
+          <div className="h-40">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={despesasCat.length > 0 ? despesasCat : [{ name: "Sem dados", value: 1 }]}
                   dataKey="value"
                   nameKey="name"
-                  outerRadius={70}
-                  innerRadius={45}
+                  outerRadius={60}
+                  innerRadius={38}
                 >
                   {despesasCat.map((_, i) => (
                     <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />

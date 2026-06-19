@@ -7,6 +7,13 @@ vi.mock("@/lib/financeiro/storage", () => ({
   useLancamentos: () => [[], vi.fn()],
 }));
 
+vi.mock("@/lib/financeiro/crud-storage", () => ({
+  useTecnicos: () => ({ items: [], adicionar: vi.fn(), atualizar: vi.fn(), remover: vi.fn(), getById: vi.fn(), emptyForm: vi.fn() }),
+  useServicos: () => ({ items: [], adicionar: vi.fn(), atualizar: vi.fn(), remover: vi.fn(), getById: vi.fn(), emptyForm: vi.fn() }),
+  useMetas: () => ({ items: [], adicionar: vi.fn(), atualizar: vi.fn(), remover: vi.fn(), getById: vi.fn(), emptyForm: vi.fn() }),
+  SERVICO_STATUS_LABEL: { agendado: "Agendado", em_andamento: "Em Andamento", concluido: "Concluído", cancelado: "Cancelado" },
+}));
+
 function MockDashboardPage() {
   const Component = Route.options.component;
   return <Component />;

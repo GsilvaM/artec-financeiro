@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useMemo, useState } from "react";
 import { Plus, Pencil, Trash2, Search, Receipt } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -43,6 +42,7 @@ const TIPOS: TipoLancamento[] = [
   "receita",
   "custo_direto",
   "despesa_operacional",
+  "deducao",
   "receita_financeira",
   "despesa_financeira",
 ];
@@ -81,12 +81,16 @@ function LancamentosPage() {
         return categorias.custos;
       case "despesa_operacional":
         return categorias.despesas;
+      case "deducao":
+        return categorias.deducoes;
       case "receita_financeira":
         return categorias.receitas_financeiras;
       case "despesa_financeira":
         return categorias.despesas_financeiras;
     }
   }, [categorias]);
+
+  const semCategorias = categoriasPorTipo(form.tipo).length === 0;
 
   const filtrados = useMemo(() => {
     const base = filtrarPorPeriodo(lancs, ano, mes);
@@ -125,6 +129,10 @@ function LancamentosPage() {
   };
   const salvar = () => {
     const current = form;
+    if (semCategorias) {
+      toast.error("Cadastre categorias em Configurações antes de criar lançamentos");
+      return;
+    }
     if (!current.categoria) {
       toast.error("Selecione uma categoria");
       return;
@@ -173,7 +181,7 @@ function LancamentosPage() {
               <Plus className="h-4 w-4" /> Novo Lançamento
             </button>
           </DialogTrigger>
-          <DialogContent key={open ? form.id || "novo" : "closed"} className="max-w-lg w-[95vw] sm:w-full">
+          <DialogContent className="max-w-lg w-[95vw] sm:w-full">
             <DialogHeader>
               <DialogTitle className="text-[#215797]">
                 {editando ? "Editar lançamento" : "Novo lançamento"}
@@ -243,19 +251,24 @@ function LancamentosPage() {
               <div className="space-y-1.5 sm:col-span-2">
                 <Label className="text-xs font-medium text-[#9CA3AF]">Categoria</Label>
                 <Select
-                  key={`cat-${form.tipo}-${form.id || "novo"}`}
                   value={form.categoria}
                   onValueChange={(v) => setForm(prev => ({ ...prev, categoria: v }))}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
-                  <SelectContent>
-                    {categoriasPorTipo(form.tipo).map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
-                    ))}
+                  <SelectContent position="item-aligned">
+                    {categoriasPorTipo(form.tipo).length === 0 ? (
+                      <div className="px-2 py-4 text-xs text-center text-[#9CA3AF]">
+                        Nenhuma categoria cadastrada
+                      </div>
+                    ) : (
+                      categoriasPorTipo(form.tipo).map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -278,7 +291,7 @@ function LancamentosPage() {
               <button onClick={() => setOpen(false)} className="btn-secondary text-sm">
                 Cancelar
               </button>
-              <button onClick={salvar} className="btn-primary text-sm">Salvar</button>
+              <button onClick={salvar} disabled={semCategorias} className="btn-primary text-sm disabled:opacity-50 disabled:cursor-not-allowed">Salvar</button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

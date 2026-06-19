@@ -53,7 +53,7 @@ export function calcularDRE(lancs: Lancamento[]): DRE {
 
   const receitasPorCategoria = byCat("receita");
   const receitaBruta = Object.values(receitasPorCategoria).reduce((a, b) => a + b, 0);
-  const deducoes = 0; // pode ser ajustado se houver tipo dedução
+  const deducoes = somaPor(lancs, "deducao");
   const receitaLiquida = receitaBruta - deducoes;
 
   const custosPorCategoria = byCat("custo_direto");

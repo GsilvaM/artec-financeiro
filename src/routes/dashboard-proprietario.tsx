@@ -17,6 +17,7 @@ import {
   Crown,
 } from "lucide-react";
 import { useLancamentos, useCategorias } from "@/lib/financeiro/storage";
+import { useTecnicos, useServicos, useMetas } from "@/lib/financeiro/crud-storage";
 import {
   anosDisponiveis,
   calcularDRE,
@@ -47,7 +48,7 @@ export const Route = createFileRoute("/dashboard-proprietario")({
   component: DashboardProprietario,
 });
 
-const META_MENSAL = 85000;
+const META_FALLBACK = 85000;
 
 function IndicadorCard({
   label,
@@ -121,6 +122,9 @@ function AlertaCard({
 function DashboardProprietario() {
   const [lancs] = useLancamentos();
   const [categorias] = useCategorias();
+  const { items: tecnicos } = useTecnicos();
+  const { items: servicos } = useServicos();
+  const { items: metas } = useMetas();
   const anos = anosDisponiveis(lancs);
   const now = new Date();
   const [ano, setAno] = useState<number | "todos">(anos[0] ?? now.getFullYear());
@@ -130,6 +134,13 @@ function DashboardProprietario() {
   const dre = useMemo(() => calcularDRE(filtrados), [filtrados]);
 
   const anoAtual = now.getFullYear();
+  const mesAtual = now.getMonth() + 1;
+
+  const periodoMeta = `${ano === "todos" ? anoAtual : ano}-${String(mes === "todos" ? mesAtual : mes).padStart(2, "0")}`;
+  const META_MENSAL = useMemo(() => {
+    const match = metas.filter((m) => m.periodo === periodoMeta);
+    return match.reduce((s, m) => s + m.valorMeta, 0) || META_FALLBACK;
+  }, [metas, periodoMeta]);
 
   const dadosMensais = useMemo(() => {
     const anoRef = ano === "todos" ? anoAtual : ano;
@@ -192,6 +203,17 @@ function DashboardProprietario() {
   }, [filtrados]);
 
   const servicoMaisLucrativo = faturamentoPorCategoria[0] ?? ["N/A", 0];
+
+  const servicosPorTecnico = useMemo(() => {
+    const map: Record<string, number> = {};
+    servicos.filter((s) => s.status === "concluido").forEach((s) => {
+      if (s.tecnico) map[s.tecnico] = (map[s.tecnico] || 0) + 1;
+    });
+    return Object.entries(map).sort((a, b) => b[1] - a[1]);
+  }, [servicos]);
+
+  const melhorTecnico = servicosPorTecnico[0];
+  const tecnicosAtivos = tecnicos.filter((t) => t.ativo).length;
   const centroCustoMaisRentavel = useMemo(() => {
     const map: Record<string, { receita: number; despesa: number }> = {};
     filtrados.forEach((l) => {
@@ -341,10 +363,10 @@ function DashboardProprietario() {
         />
         <IndicadorCard
           label="Melhor Técnico"
-          value="—"
+          value={melhorTecnico ? melhorTecnico[0] : "—"}
           icon={<Users className="h-5 w-5" />}
           color="#6B2FD6"
-          subtitle="Ranking de performance"
+          subtitle={melhorTecnico ? `${melhorTecnico[1]} serviços` : "Sem serviços concluídos"}
         />
         <IndicadorCard
           label="Serviço + Lucrativo"

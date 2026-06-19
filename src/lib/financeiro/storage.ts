@@ -82,7 +82,10 @@ export function useCategorias(): [Categorias, (c: Categorias) => void] {
 
   const setter = useCallback((novas: Categorias) => mutate(novas), [mutate]);
 
-  return [categorias ?? CATEGORIAS_INICIAIS, setter];
+  const isEmpty = categorias
+    && Object.values(categorias).every((arr) => arr.length === 0);
+
+  return [isEmpty ? CATEGORIAS_INICIAIS : (categorias ?? CATEGORIAS_INICIAIS), setter];
 }
 
 export async function exportarBackup() {

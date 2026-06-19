@@ -6,6 +6,7 @@ describe("TIPO_LABEL", () => {
     expect(TIPO_LABEL).toHaveProperty("receita");
     expect(TIPO_LABEL).toHaveProperty("custo_direto");
     expect(TIPO_LABEL).toHaveProperty("despesa_operacional");
+    expect(TIPO_LABEL).toHaveProperty("deducao");
     expect(TIPO_LABEL).toHaveProperty("receita_financeira");
     expect(TIPO_LABEL).toHaveProperty("despesa_financeira");
   });
@@ -14,12 +15,13 @@ describe("TIPO_LABEL", () => {
     expect(TIPO_LABEL.receita).toBe("Receita");
     expect(TIPO_LABEL.custo_direto).toBe("Custo Direto");
     expect(TIPO_LABEL.despesa_operacional).toBe("Despesa Operacional");
+    expect(TIPO_LABEL.deducao).toBe("Deduções");
     expect(TIPO_LABEL.receita_financeira).toBe("Receita Financeira");
     expect(TIPO_LABEL.despesa_financeira).toBe("Despesa Financeira");
   });
 
-  it("tem 5 entradas", () => {
-    expect(Object.keys(TIPO_LABEL)).toHaveLength(5);
+  it("tem 6 entradas", () => {
+    expect(Object.keys(TIPO_LABEL)).toHaveLength(6);
   });
 });
 
