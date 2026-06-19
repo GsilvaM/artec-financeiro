@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   TrendingUp,
   TrendingDown,
@@ -93,14 +93,19 @@ function Dashboard() {
   const { items: servicos } = useServicos();
   const { items: metas } = useMetas();
   const anos = anosDisponiveis(lancs);
-  const [ano, setAno] = useState<number | "todos">(anos[0] ?? new Date().getFullYear());
+  const [ano, setAno] = useState<number | "todos">(anos[0] ?? 2026);
   const [mes, setMes] = useState<number | "todos">("todos");
 
   const filtrados = useMemo(() => filtrarPorPeriodo(lancs, ano, mes), [lancs, ano, mes]);
   const dre = useMemo(() => calcularDRE(filtrados), [filtrados]);
 
-  const mesAtual = new Date().getMonth();
-  const anoAtual = new Date().getFullYear();
+  const [anoAtual, setAnoAtual] = useState(2026);
+  const [mesAtual, setMesAtual] = useState(0);
+  useEffect(() => {
+    const now = new Date();
+    setAnoAtual(now.getFullYear());
+    setMesAtual(now.getMonth());
+  }, []);
 
   const periodoMeta = `${ano === "todos" ? anoAtual : ano}-${String(mes === "todos" ? mesAtual + 1 : mes).padStart(2, "0")}`;
   const META_MENSAL = useMemo(() => {

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TrendingUp, TrendingDown, DollarSign, BarChart3 } from "lucide-react";
 import { useLancamentos } from "@/lib/financeiro/storage";
 import { calcularDRE, fmtBRL, MESES } from "@/lib/financeiro/calc";
@@ -25,8 +25,10 @@ function FluxoCaixaPage() {
   const saldoOperacional = dre.receitaBruta - dre.custosDir - dre.despesasOp;
   const saldoPeriodo = dre.lucroLiquido;
 
+  const [anoAtual, setAnoAtual] = useState(2026);
+  useEffect(() => { setAnoAtual(new Date().getFullYear()); }, []);
+
   const dadosMensais = useMemo(() => {
-    const anoAtual = new Date().getFullYear();
     return MESES.map((nome, i) => {
       const sub = lancs.filter((l) => {
         const d = new Date(l.data + "T00:00:00");
@@ -40,7 +42,7 @@ function FluxoCaixaPage() {
         Saldo: d.lucroLiquido,
       };
     });
-  }, [lancs]);
+  }, [lancs, anoAtual]);
 
   function TooltipContent({ active, payload, label }: any) {
     if (active && payload && payload.length) {

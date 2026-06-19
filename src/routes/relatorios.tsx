@@ -22,7 +22,7 @@ export const Route = createFileRoute("/relatorios")({
 function RelatoriosPage() {
   const [lancs] = useLancamentos();
   const anos = anosDisponiveis(lancs);
-  const [ano, setAno] = useState<number | "todos">(anos[0] ?? new Date().getFullYear());
+  const [ano, setAno] = useState<number | "todos">(anos[0] ?? 2026);
   const [mes, setMes] = useState<number | "todos">("todos");
   const [cat, setCat] = useState<string>("todas");
 

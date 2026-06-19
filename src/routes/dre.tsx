@@ -52,9 +52,8 @@ function Linha({
 function DREPage() {
   const [lancs] = useLancamentos();
   const anos = anosDisponiveis(lancs);
-  const now = new Date();
-  const [ano, setAno] = useState<number | "todos">(anos[0] ?? now.getFullYear());
-  const [mes, setMes] = useState<number | "todos">(now.getMonth() + 1);
+  const [ano, setAno] = useState<number | "todos">(anos[0] ?? 2026);
+  const [mes, setMes] = useState<number | "todos">(1);
 
   const filtrados = useMemo(() => filtrarPorPeriodo(lancs, ano, mes), [lancs, ano, mes]);
   const dre = useMemo(() => calcularDRE(filtrados), [filtrados]);
