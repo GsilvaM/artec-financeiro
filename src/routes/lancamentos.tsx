@@ -305,9 +305,9 @@ function LancamentosPage() {
               <TableRow>
                 <TableHead>Data</TableHead>
                 <TableHead>Tipo</TableHead>
-                <TableHead>Categoria</TableHead>
+                <TableHead className="hidden sm:table-cell">Categoria</TableHead>
                 <TableHead>Descrição</TableHead>
-                <TableHead>Cliente/Fornecedor</TableHead>
+                <TableHead className="hidden sm:table-cell">Cliente/Fornecedor</TableHead>
                 <TableHead className="text-right">Valor</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="w-20" />
@@ -326,20 +326,20 @@ function LancamentosPage() {
               )}
               {filtrados.map((l) => (
                 <TableRow key={l.id}>
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium whitespace-nowrap">
                     {new Date(l.data + "T00:00:00").toLocaleDateString("pt-BR")}
                   </TableCell>
-                  <TableCell>{TIPO_LABEL[l.tipo]}</TableCell>
-                  <TableCell>{l.categoria}</TableCell>
-                  <TableCell>{l.descricao}</TableCell>
-                  <TableCell>{l.contraparte}</TableCell>
-                  <TableCell className="text-right font-semibold tabular-nums">
+                  <TableCell className="whitespace-nowrap">{TIPO_LABEL[l.tipo]}</TableCell>
+                  <TableCell className="hidden sm:table-cell whitespace-nowrap">{l.categoria}</TableCell>
+                  <TableCell className="max-w-[120px] truncate sm:max-w-none">{l.descricao}</TableCell>
+                  <TableCell className="hidden sm:table-cell whitespace-nowrap">{l.contraparte}</TableCell>
+                  <TableCell className="text-right font-semibold tabular-nums whitespace-nowrap">
                     {fmtBRL(l.valor)}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <Badge variant={statusVariant(l.status)}>{STATUS_LABEL[l.status]}</Badge>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <div className="flex justify-end gap-0.5 sm:gap-1">
                       <Button size="icon" variant="ghost" onClick={() => editar(l)} className="h-8 w-8 sm:h-9 sm:w-9">
                         <Pencil className="h-3.5 w-3.5 sm:h-4 sm:w-4" />

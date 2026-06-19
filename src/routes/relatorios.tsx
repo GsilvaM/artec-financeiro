@@ -95,75 +95,75 @@ function RelatoriosPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-5">
         <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
-          <CardContent className="flex items-center gap-3 p-3 sm:gap-4 sm:p-5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#215797]/10 text-[#215797] sm:h-11 sm:w-11">
-              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
+          <CardContent className="flex items-center gap-2 p-2 sm:gap-4 sm:p-5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#215797]/10 text-[#215797] sm:h-11 sm:w-11">
+              <TrendingUp className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
+              <p className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
                 Total Recebido
               </p>
-              <p className="text-sm font-bold text-[#215797] tabular-nums sm:text-lg">
+              <p className="text-[11px] font-bold text-[#215797] tabular-nums sm:text-lg">
                 {fmtBRL(resumo.totalRecebido)}
               </p>
             </div>
           </CardContent>
         </Card>
         <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
-          <CardContent className="flex items-center gap-3 p-3 sm:gap-4 sm:p-5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#EB4134]/10 text-[#EB4134] sm:h-11 sm:w-11">
-              <TrendingDown className="h-4 w-4 sm:h-5 sm:w-5" />
+          <CardContent className="flex items-center gap-2 p-2 sm:gap-4 sm:p-5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#EB4134]/10 text-[#EB4134] sm:h-11 sm:w-11">
+              <TrendingDown className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
+              <p className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
                 Total Pago
               </p>
-              <p className="text-sm font-bold text-[#EB4134] tabular-nums sm:text-lg">
+              <p className="text-[11px] font-bold text-[#EB4134] tabular-nums sm:text-lg">
                 {fmtBRL(resumo.totalPago)}
               </p>
             </div>
           </CardContent>
         </Card>
         <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
-          <CardContent className="flex items-center gap-3 p-3 sm:gap-4 sm:p-5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#2783C3]/10 text-[#2783C3] sm:h-11 sm:w-11">
-              <Wallet className="h-4 w-4 sm:h-5 sm:w-5" />
+          <CardContent className="flex items-center gap-2 p-2 sm:gap-4 sm:p-5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#2783C3]/10 text-[#2783C3] sm:h-11 sm:w-11">
+              <Wallet className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
+              <p className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
                 Saldo do Período
               </p>
-              <p className="text-sm font-bold text-[#2783C3] tabular-nums sm:text-lg">
+              <p className="text-[11px] font-bold text-[#2783C3] tabular-nums sm:text-lg">
                 {fmtBRL(resumo.saldo)}
               </p>
             </div>
           </CardContent>
         </Card>
         <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
-          <CardContent className="flex items-center gap-3 p-3 sm:gap-4 sm:p-5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#2C3A5C]/10 text-[#2C3A5C] sm:h-11 sm:w-11">
-              <Receipt className="h-4 w-4 sm:h-5 sm:w-5" />
+          <CardContent className="flex items-center gap-2 p-2 sm:gap-4 sm:p-5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#2C3A5C]/10 text-[#2C3A5C] sm:h-11 sm:w-11">
+              <Receipt className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
+              <p className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
                 Qtd. Receitas
               </p>
-              <p className="text-sm font-bold text-[#2C3A5C] tabular-nums sm:text-lg">{resumo.qtdReceitas}</p>
+              <p className="text-[11px] font-bold text-[#2C3A5C] tabular-nums sm:text-lg">{resumo.qtdReceitas}</p>
             </div>
           </CardContent>
         </Card>
         <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
-          <CardContent className="flex items-center gap-3 p-3 sm:gap-4 sm:p-5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#EB4134]/10 text-[#EB4134] sm:h-11 sm:w-11">
-              <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+          <CardContent className="flex items-center gap-2 p-2 sm:gap-4 sm:p-5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#EB4134]/10 text-[#EB4134] sm:h-11 sm:w-11">
+              <ArrowRightLeft className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
+              <p className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
                 Qtd. Despesas
               </p>
-              <p className="text-sm font-bold text-[#EB4134] tabular-nums sm:text-lg">{resumo.qtdDespesas}</p>
+              <p className="text-[11px] font-bold text-[#EB4134] tabular-nums sm:text-lg">{resumo.qtdDespesas}</p>
             </div>
           </CardContent>
         </Card>
@@ -196,9 +196,9 @@ function RelatoriosPage() {
               <TableRow>
                 <TableHead>Data</TableHead>
                 <TableHead>Tipo</TableHead>
-                <TableHead>Categoria</TableHead>
+                <TableHead className="hidden sm:table-cell">Categoria</TableHead>
                 <TableHead>Descrição</TableHead>
-                <TableHead>Cliente/Fornecedor</TableHead>
+                <TableHead className="hidden sm:table-cell">Cliente/Fornecedor</TableHead>
                 <TableHead className="text-right">Valor</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
@@ -216,17 +216,17 @@ function RelatoriosPage() {
               )}
               {filtrados.map((l) => (
                 <TableRow key={l.id}>
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium whitespace-nowrap">
                     {new Date(l.data + "T00:00:00").toLocaleDateString("pt-BR")}
                   </TableCell>
-                  <TableCell>{TIPO_LABEL[l.tipo]}</TableCell>
-                  <TableCell>{l.categoria}</TableCell>
-                  <TableCell>{l.descricao}</TableCell>
-                  <TableCell>{l.contraparte}</TableCell>
-                  <TableCell className="text-right font-semibold tabular-nums">
+                  <TableCell className="whitespace-nowrap">{TIPO_LABEL[l.tipo]}</TableCell>
+                  <TableCell className="hidden sm:table-cell whitespace-nowrap">{l.categoria}</TableCell>
+                  <TableCell className="max-w-[120px] truncate sm:max-w-none">{l.descricao}</TableCell>
+                  <TableCell className="hidden sm:table-cell whitespace-nowrap">{l.contraparte}</TableCell>
+                  <TableCell className="text-right font-semibold tabular-nums whitespace-nowrap">
                     {fmtBRL(l.valor)}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <Badge variant={l.status === "pendente" ? "secondary" : "default"}>
                       {STATUS_LABEL[l.status]}
                     </Badge>
