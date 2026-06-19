@@ -1,31 +1,9 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { readFileSync, existsSync } from "node:fs";
-import { resolve } from "node:path";
+import { getEnv } from "./env";
 import type { Lancamento, Categorias } from "@/lib/financeiro/types";
 import { CATEGORIAS_INICIAIS, LANCAMENTOS_SEED } from "@/lib/financeiro/seed";
 
 let serviceClient: SupabaseClient | null = null;
-
-function getEnv(name: string): string {
-  const val = process.env[name];
-  if (val) return val;
-  try {
-    const envPath = resolve(process.cwd(), ".env");
-    if (existsSync(envPath)) {
-      const content = readFileSync(envPath, "utf-8");
-      for (const line of content.split("\n")) {
-        const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith("#")) continue;
-        const eqIdx = trimmed.indexOf("=");
-        if (eqIdx === -1) continue;
-        const key = trimmed.slice(0, eqIdx).trim();
-        const value = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, "");
-        if (key === name) return value;
-      }
-    }
-  } catch { }
-  return "";
-}
 
 function db(): SupabaseClient {
   if (serviceClient) return serviceClient;
