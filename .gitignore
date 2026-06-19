@@ -17,6 +17,9 @@ dist-ssr
 .nitro
 *.local
 
+# Supabase CLI temp files
+supabase/
+
 # Environment variables (contains secrets)
 .env
 
