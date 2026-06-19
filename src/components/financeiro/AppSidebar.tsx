@@ -25,7 +25,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="flex items-center gap-3 border-b border-sidebar-border px-4 py-4 group-data-[collapsible=icon]:px-3">
+      <SidebarHeader className="flex items-center gap-3 border-b border-sidebar-border px-4 py-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2">
         <img src="/logo_artec.png" alt="Artec" className="h-8 w-auto shrink-0" />
         <div className="flex flex-col leading-tight group-data-[collapsible=icon]:hidden">
           <span className="text-sm font-semibold text-sidebar-foreground">Artec</span>
@@ -36,16 +36,26 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                    <Link to={item.url} className="flex items-center gap-3">
-                      <item.icon className="h-[18px] w-[18px]" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) => {
+                const active = isActive(item.url);
+                return (
+                  <SidebarMenuItem key={item.url}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      className="relative"
+                    >
+                      <Link to={item.url} className="flex items-center gap-3">
+                        {active && (
+                          <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-sidebar-primary max-sm:hidden group-data-[collapsible=icon]:hidden" />
+                        )}
+                        <item.icon className="h-[18px] w-[18px]" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

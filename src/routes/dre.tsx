@@ -60,12 +60,12 @@ function DREPage() {
   const dre = useMemo(() => calcularDRE(filtrados), [filtrados]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">DRE Mensal</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Demonstrativo gerado automaticamente com base nos lançamentos.
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">DRE Mensal</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
+            Demonstrativo gerado com base nos lançamentos.
           </p>
         </div>
         <PeriodoFiltro

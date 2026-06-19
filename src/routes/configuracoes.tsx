@@ -115,20 +115,20 @@ function ConfigPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">Configurações</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Gerencie categorias e faça backup dos dados em JSON.
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">Configurações</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
+            Gerencie categorias e faça backup dos dados.
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => exportarBackup()}>
-            <Download className="mr-2 h-4 w-4" /> Exportar JSON
+        <div className="flex shrink-0 gap-2">
+          <Button variant="outline" onClick={() => exportarBackup()} className="text-xs sm:text-sm">
+            <Download className="mr-1.5 h-4 w-4" /> Exportar
           </Button>
-          <Button variant="outline" onClick={() => fileRef.current?.click()}>
-            <Upload className="mr-2 h-4 w-4" /> Importar JSON
+          <Button variant="outline" onClick={() => fileRef.current?.click()} className="text-xs sm:text-sm">
+            <Upload className="mr-1.5 h-4 w-4" /> Importar
           </Button>
           <input
             ref={fileRef}

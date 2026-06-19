@@ -106,12 +106,12 @@ function Dashboard() {
   }, [dre]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">Dashboard</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Indicadores financeiros consolidados do período selecionado.
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">Dashboard</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
+            Indicadores financeiros consolidados do período.
           </p>
         </div>
         <PeriodoFiltro ano={ano} mes={mes} anos={anos} onAno={setAno} onMes={setMes} />

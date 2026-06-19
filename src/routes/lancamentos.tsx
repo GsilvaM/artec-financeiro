@@ -157,147 +157,147 @@ function LancamentosPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">Lançamentos</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Cadastre receitas, custos e despesas. Tudo é salvo automaticamente.
-          </p>
-        </div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={novo}>
-              <Plus className="mr-2 h-4 w-4" /> Novo lançamento
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle className="text-primary">
-                {editando ? "Editar lançamento" : "Novo lançamento"}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label className="text-xs font-medium text-muted-foreground">Data</Label>
-                <Input
-                  type="date"
-                  value={form.data}
-                  onChange={(e) => setForm({ ...form, data: e.target.value })}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-medium text-muted-foreground">Valor (R$)</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={form.valor || ""}
-                  onChange={(e) => setForm({ ...form, valor: parseFloat(e.target.value) || 0 })}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-medium text-muted-foreground">Tipo</Label>
-                <Select
-                  value={form.tipo}
-                  onValueChange={(v) =>
-                    setForm({
-                      ...form,
-                      tipo: v as TipoLancamento,
-                      categoria: "",
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {TIPOS.map((t) => (
-                      <SelectItem key={t} value={t}>
-                        {TIPO_LABEL[t]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-medium text-muted-foreground">Status</Label>
-                <Select
-                  value={form.status}
-                  onValueChange={(v) => setForm({ ...form, status: v as StatusLancamento })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATUS.map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {STATUS_LABEL[s]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5 col-span-2">
-                <Label className="text-xs font-medium text-muted-foreground">Categoria</Label>
-                <Select
-                  value={form.categoria}
-                  onValueChange={(v) => setForm({ ...form, categoria: v })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categoriasPorTipo(form.tipo).map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5 col-span-2">
-                <Label className="text-xs font-medium text-muted-foreground">Descrição</Label>
-                <Input
-                  value={form.descricao}
-                  onChange={(e) => setForm({ ...form, descricao: e.target.value })}
-                />
-              </div>
-              <div className="space-y-1.5 col-span-2">
-                <Label className="text-xs font-medium text-muted-foreground">
-                  Cliente ou Fornecedor
-                </Label>
-                <Input
-                  value={form.contraparte}
-                  onChange={(e) => setForm({ ...form, contraparte: e.target.value })}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setOpen(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={salvar}>Salvar</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      <Card>
-        <CardHeader className="gap-3">
-          <CardTitle className="text-base text-primary">Filtros</CardTitle>
-          <div className="flex flex-wrap gap-3">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Pesquisar..."
-                value={busca}
-                onChange={(e) => setBusca(e.target.value)}
-                className="w-full sm:w-72 pl-10"
-              />
-            </div>
-            <PeriodoFiltro ano={ano} mes={mes} anos={anos} onAno={setAno} onMes={setMes} />
+        <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
+          <div className="min-w-0 flex-1">
+            <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">Lançamentos</h2>
+            <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
+              Cadastre receitas, custos e despesas.
+            </p>
           </div>
-        </CardHeader>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={novo} className="shrink-0 text-xs sm:text-sm">
+                <Plus className="mr-1.5 h-4 w-4" /> Novo
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg w-[95vw] sm:w-full">
+              <DialogHeader>
+                <DialogTitle className="text-primary">
+                  {editando ? "Editar lançamento" : "Novo lançamento"}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="grid max-h-[60vh] gap-4 overflow-y-auto sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium text-muted-foreground">Data</Label>
+                  <Input
+                    type="date"
+                    value={form.data}
+                    onChange={(e) => setForm({ ...form, data: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium text-muted-foreground">Valor (R$)</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={form.valor || ""}
+                    onChange={(e) => setForm({ ...form, valor: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium text-muted-foreground">Tipo</Label>
+                  <Select
+                    value={form.tipo}
+                    onValueChange={(v) =>
+                      setForm({
+                        ...form,
+                        tipo: v as TipoLancamento,
+                        categoria: "",
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TIPOS.map((t) => (
+                        <SelectItem key={t} value={t}>
+                          {TIPO_LABEL[t]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium text-muted-foreground">Status</Label>
+                  <Select
+                    value={form.status}
+                    onValueChange={(v) => setForm({ ...form, status: v as StatusLancamento })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STATUS.map((s) => (
+                        <SelectItem key={s} value={s}>
+                          {STATUS_LABEL[s]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label className="text-xs font-medium text-muted-foreground">Categoria</Label>
+                  <Select
+                    value={form.categoria}
+                    onValueChange={(v) => setForm({ ...form, categoria: v })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categoriasPorTipo(form.tipo).map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label className="text-xs font-medium text-muted-foreground">Descrição</Label>
+                  <Input
+                    value={form.descricao}
+                    onChange={(e) => setForm({ ...form, descricao: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label className="text-xs font-medium text-muted-foreground">
+                    Cliente ou Fornecedor
+                  </Label>
+                  <Input
+                    value={form.contraparte}
+                    onChange={(e) => setForm({ ...form, contraparte: e.target.value })}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button onClick={salvar}>Salvar</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        <Card>
+          <CardHeader className="gap-3">
+            <CardTitle className="text-sm text-primary sm:text-base">Filtros</CardTitle>
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <div className="relative w-full sm:w-72">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Pesquisar..."
+                  value={busca}
+                  onChange={(e) => setBusca(e.target.value)}
+                  className="w-full pl-10"
+                />
+              </div>
+              <PeriodoFiltro ano={ano} mes={mes} anos={anos} onAno={setAno} onMes={setMes} />
+            </div>
+          </CardHeader>
         <CardContent>
           <div className="table-scroll">
           <Table>
@@ -340,12 +340,12 @@ function LancamentosPage() {
                     <Badge variant={statusVariant(l.status)}>{STATUS_LABEL[l.status]}</Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex justify-end gap-1">
-                      <Button size="icon" variant="ghost" onClick={() => editar(l)}>
-                        <Pencil className="h-4 w-4" />
+                    <div className="flex justify-end gap-0.5 sm:gap-1">
+                      <Button size="icon" variant="ghost" onClick={() => editar(l)} className="h-8 w-8 sm:h-9 sm:w-9">
+                        <Pencil className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       </Button>
-                      <Button size="icon" variant="ghost" onClick={() => excluir(l.id)}>
-                        <Trash2 className="h-4 w-4" />
+                      <Button size="icon" variant="ghost" onClick={() => excluir(l.id)} className="h-8 w-8 sm:h-9 sm:w-9">
+                        <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       </Button>
                     </div>
                   </TableCell>

@@ -82,16 +82,16 @@ function RelatoriosPage() {
   }, [filtrados]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">Relatórios</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Resumo do período e tabela detalhada exportável em CSV.
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">Relatórios</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
+            Resumo do período e tabela exportável em CSV.
           </p>
         </div>
-        <Button onClick={() => exportarCSV(filtrados)}>
-          <Download className="mr-2 h-4 w-4" /> Exportar CSV
+        <Button onClick={() => exportarCSV(filtrados)} className="shrink-0 text-xs sm:text-sm">
+          <Download className="mr-1.5 h-4 w-4" /> Exportar CSV
         </Button>
       </div>
 
@@ -154,7 +154,7 @@ function RelatoriosPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover sm:col-span-2 lg:col-span-1">
+        <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
           <CardContent className="flex items-center gap-3 p-3 sm:gap-4 sm:p-5">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#EB4134]/10 text-[#EB4134] sm:h-11 sm:w-11">
               <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -171,11 +171,11 @@ function RelatoriosPage() {
 
       <Card>
         <CardHeader className="gap-3">
-          <CardTitle className="text-base text-primary">Filtros</CardTitle>
-          <div className="flex flex-wrap gap-3">
+          <CardTitle className="text-sm text-primary sm:text-base">Filtros</CardTitle>
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <PeriodoFiltro ano={ano} mes={mes} anos={anos} onAno={setAno} onMes={setMes} />
             <Select value={cat} onValueChange={setCat}>
-              <SelectTrigger className="w-48 border-primary/20 bg-white">
+              <SelectTrigger className="w-full sm:w-48 border-primary/20 bg-white">
                 <SelectValue placeholder="Categoria" />
               </SelectTrigger>
               <SelectContent>
