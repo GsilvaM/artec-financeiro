@@ -176,7 +176,7 @@ function AdminPage() {
           {[
             { label: "Versão", value: "1.0.0", icon: <Database className="h-4 w-4" />, color: "#215797" },
             { label: "Ambiente", value: "Produção", icon: <Building2 className="h-4 w-4" />, color: "#10B981" },
-            { label: "Meta Mensal", value: `R$ ${RECEITA_META.toLocaleString("pt-BR")}`, icon: <Calendar className="h-4 w-4" />, color: "#F59E0B" },
+            { label: "Meta Mensal", value: "R$ 85.000", icon: <Calendar className="h-4 w-4" />, color: "#F59E0B" },
             { label: "Status", value: "Operacional", icon: <CheckCircle2 className="h-4 w-4" />, color: "#10B981" },
           ].map(({ label, value, icon, color }) => (
             <div key={label} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50">

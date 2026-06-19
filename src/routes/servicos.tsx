@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Plus, Pencil, Trash2, Search, Wrench, Clock, CheckCircle2, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useServicos, useTecnicos, SERVICO_STATUS_LABEL, type Servico } from "@/lib/financeiro/crud-storage";
-import { fmtBRL } from "@/lib/financeiro/calc";
+import { fmtDateISO, fmtBRL } from "@/lib/financeiro/calc";
 
 export const Route = createFileRoute("/servicos")({
   head: () => ({ meta: [{ title: "Serviços — Artec Financeiro" }] }),
@@ -105,7 +105,7 @@ function ServicosPage() {
                   <td className="table-cell font-medium">{s.cliente}</td>
                   <td className="table-cell hidden sm:table-cell">{s.tecnico || "—"}</td>
                   <td className="table-cell hidden md:table-cell max-w-[200px] truncate">{s.descricao}</td>
-                  <td className="table-cell whitespace-nowrap">{new Date(s.data + "T00:00:00").toLocaleDateString("pt-BR")}</td>
+                  <td className="table-cell whitespace-nowrap">{fmtDateISO(s.data)}</td>
                   <td className="table-cell text-right font-semibold">{fmtBRL(s.valor)}</td>
                   <td className="table-cell">
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: `${STATUS_CORES[s.status]}15`, color: STATUS_CORES[s.status] }}>

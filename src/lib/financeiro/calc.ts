@@ -3,6 +3,11 @@ import type { Lancamento } from "./types";
 export const fmtBRL = (n: number) =>
   n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
+export function fmtDateISO(iso: string) {
+  const d = new Date(iso + "T00:00:00");
+  return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
+}
+
 export const fmtPct = (n: number) => `${(isFinite(n) ? n : 0).toFixed(1).replace(".", ",")}%`;
 
 export function filtrarPorPeriodo(

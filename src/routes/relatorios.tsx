@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { exportarCSV, useLancamentos } from "@/lib/financeiro/storage";
-import { anosDisponiveis, filtrarPorPeriodo, fmtBRL } from "@/lib/financeiro/calc";
+import { anosDisponiveis, filtrarPorPeriodo, fmtBRL, fmtDateISO } from "@/lib/financeiro/calc";
 import { PeriodoFiltro } from "@/components/financeiro/PeriodoFiltro";
 import { STATUS_LABEL, TIPO_LABEL } from "@/lib/financeiro/types";
 
@@ -156,7 +156,7 @@ function RelatoriosPage() {
               {filtrados.map((l) => (
                 <tr key={l.id} className="table-row">
                   <td className="table-cell whitespace-nowrap font-medium text-xs sm:text-sm">
-                    {new Date(l.data + "T00:00:00").toLocaleDateString("pt-BR")}
+                    {fmtDateISO(l.data)}
                   </td>
                   <td className="table-cell hidden sm:table-cell whitespace-nowrap text-xs sm:text-sm">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${

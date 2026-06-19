@@ -8,7 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -144,14 +144,16 @@ function AuthGuard({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const router = useRouter();
   const location = useLocation();
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    setReady(true);
     if (!user && location.pathname !== "/login") {
       router.navigate({ to: "/login" });
     }
   }, [user, location.pathname, router]);
 
-  if (!user && location.pathname !== "/login") return null;
+  if (!user && location.pathname !== "/login" && ready) return null;
 
   return <>{children}</>;
 }
@@ -160,6 +162,9 @@ function AppShell() {
   const { user } = useAuth();
   const location = useLocation();
   const isLoginPage = location.pathname === "/login";
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => { setReady(true); }, []);
 
   if (isLoginPage) {
     return (
@@ -171,8 +176,8 @@ function AppShell() {
 
   return (
     <>
-      {user && <HeaderNav />}
-      <main className={`min-h-screen bg-background ${user ? "pt-16" : ""}`}>
+      {(user || !ready) && <HeaderNav />}
+      <main className={`min-h-screen bg-background ${(user || !ready) ? "pt-16" : ""}`}>
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 py-6 sm:py-8 animate-fade-in">
           <Outlet />
         </div>

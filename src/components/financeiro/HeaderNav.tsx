@@ -282,6 +282,9 @@ function MobileNav() {
 
 export function HeaderNav() {
   const { user, logout } = useAuth();
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => { setReady(true); }, []);
 
   function handleLogout() {
     logout();
@@ -316,7 +319,7 @@ export function HeaderNav() {
 
         {/* Right side */}
         <div className="flex items-center gap-2">
-          {user?.role === "admin" && (
+          {ready && user?.role === "admin" && (
             <Link
               to="/admin"
               className="hidden sm:flex items-center justify-center h-9 w-9 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all"
@@ -335,7 +338,7 @@ export function HeaderNav() {
             <div className="flex items-center justify-center h-8 w-8 rounded-full bg-white/15 text-white">
               <User className="h-4 w-4" />
             </div>
-            <div className="text-sm text-white/80 font-medium">{user?.name ?? "Usuário"}</div>
+            <div className="text-sm text-white/80 font-medium">{ready ? (user?.name ?? "Usuário") : ""}</div>
           </div>
 
           <button
