@@ -1,10 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Plus, Trash2, Download, Upload, Tags } from "lucide-react";
+import { Plus, Trash2, Download, Upload, Tags, Settings } from "lucide-react";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { exportarBackup, importarBackup, useCategorias } from "@/lib/financeiro/storage";
@@ -16,20 +14,18 @@ export const Route = createFileRoute("/configuracoes")({
 });
 
 const GRUPOS: { key: keyof Categorias; label: string; color: string }[] = [
-  { key: "receitas", label: "Receitas", color: "text-[#215797]" },
-  { key: "custos", label: "Custos Diretos", color: "text-[#EB4134]" },
-  { key: "despesas", label: "Despesas Operacionais", color: "text-[#EB4134]" },
-  { key: "deducoes", label: "Deduções", color: "text-[#2C3A5C]" },
-  { key: "receitas_financeiras", label: "Receitas Financeiras", color: "text-[#2783C3]" },
-  { key: "despesas_financeiras", label: "Despesas Financeiras", color: "text-[#EB4134]" },
+  { key: "receitas", label: "Receitas", color: "#215797" },
+  { key: "custos", label: "Custos Diretos", color: "#EF4444" },
+  { key: "despesas", label: "Despesas Operacionais", color: "#EF4444" },
+  { key: "deducoes", label: "Deduções", color: "#6B2FD6" },
+  { key: "receitas_financeiras", label: "Receitas Financeiras", color: "#10B981" },
+  { key: "despesas_financeiras", label: "Despesas Financeiras", color: "#EF4444" },
 ];
 
 function ListaCategorias({
-  titulo,
   itens,
   onChange,
 }: {
-  titulo: string;
   itens: string[];
   onChange: (v: string[]) => void;
 }) {
@@ -50,47 +46,44 @@ function ListaCategorias({
   };
 
   return (
-    <Card>
-      <CardContent className="p-5 space-y-3">
-        <div className="flex gap-2">
-          <Input
-            placeholder="Nova categoria"
-            value={novo}
-            onChange={(e) => setNovo(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && adicionar()}
-          />
-          <Button onClick={adicionar}>
-            <Plus className="h-4 w-4" />
-          </Button>
-        </div>
-        <ul className="divide-y divide-border rounded-xl border border-border">
-          {itens.length === 0 && (
-            <li className="py-6 text-center text-sm text-muted-foreground">
-              Nenhuma categoria cadastrada.
-            </li>
-          )}
-          {itens.map((c) => (
-            <li
-              key={c}
-              className="flex items-center justify-between px-4 py-3 text-sm transition-colors hover:bg-muted/30"
+    <div className="space-y-3">
+      <div className="flex gap-2">
+        <input
+          placeholder="Nova categoria"
+          value={novo}
+          onChange={(e) => setNovo(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && adicionar()}
+          className="flex-1 h-10 rounded-lg border border-gray-200 bg-white text-sm text-[#4B5563] placeholder:text-gray-400 px-3 focus:outline-none focus:ring-2 focus:ring-[#215797]/20 focus:border-[#215797] transition-all"
+        />
+        <button onClick={adicionar} className="btn-primary !h-10">
+          <Plus className="h-4 w-4" /> Adicionar
+        </button>
+      </div>
+      <div className="divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white">
+        {itens.length === 0 && (
+          <div className="py-8 text-center text-sm text-[#9CA3AF]">
+            Nenhuma categoria cadastrada.
+          </div>
+        )}
+        {itens.map((c) => (
+          <div
+            key={c}
+            className="flex items-center justify-between px-4 py-3 text-sm transition-colors hover:bg-gray-50"
+          >
+            <div className="flex items-center gap-3">
+              <Tags className="h-3.5 w-3.5 text-gray-400" />
+              <span className="text-[#4B5563]">{c}</span>
+            </div>
+            <button
+              className="flex items-center justify-center h-8 w-8 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"
+              onClick={() => remover(c)}
             >
-              <div className="flex items-center gap-3">
-                <Tags className="h-3.5 w-3.5 text-muted-foreground" />
-                <span>{c}</span>
-              </div>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                onClick={() => remover(c)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </li>
-          ))}
-        </ul>
-      </CardContent>
-    </Card>
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -115,21 +108,24 @@ function ConfigPage() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
-        <div className="min-w-0 flex-1">
-          <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">Configurações</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
-            Gerencie categorias e faça backup dos dados.
-          </p>
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-[#215797]/10 text-[#215797]">
+            <Settings className="h-5 w-5" />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-[#1F2937] tracking-tight">Configurações</h1>
+            <p className="text-sm text-[#9CA3AF] mt-0.5">Gerencie categorias e faça backup dos dados</p>
+          </div>
         </div>
-        <div className="flex shrink-0 gap-2">
-          <Button variant="outline" onClick={() => exportarBackup()} className="text-xs sm:text-sm">
-            <Download className="mr-1.5 h-4 w-4" /> Exportar
-          </Button>
-          <Button variant="outline" onClick={() => fileRef.current?.click()} className="text-xs sm:text-sm">
-            <Upload className="mr-1.5 h-4 w-4" /> Importar
-          </Button>
+        <div className="flex gap-2">
+          <button onClick={() => exportarBackup()} className="btn-secondary text-sm">
+            <Download className="h-4 w-4" /> Exportar
+          </button>
+          <button onClick={() => fileRef.current?.click()} className="btn-secondary text-sm">
+            <Upload className="h-4 w-4" /> Importar
+          </button>
           <input
             ref={fileRef}
             type="file"
@@ -144,28 +140,34 @@ function ConfigPage() {
         </div>
       </div>
 
-      <Tabs defaultValue="receitas">
-        <TabsList className="flex h-auto flex-wrap gap-1.5 bg-transparent p-0">
-          {GRUPOS.map((g) => (
-            <TabsTrigger
-              key={g.key}
-              value={g.key}
-              className="rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-medium shadow-sm transition-all duration-200 sm:px-4 sm:py-2 sm:text-xs data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-white"
-            >
-              {g.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        {GRUPOS.map((g) => (
-          <TabsContent key={g.key} value={g.key} className="mt-4 animate-fade-in">
-            <ListaCategorias
-              titulo={g.label}
-              itens={categorias[g.key]}
-              onChange={(v) => update(g.key, v)}
-            />
-          </TabsContent>
-        ))}
-      </Tabs>
+      <div className="card-artec-static overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100">
+          <h3 className="text-base font-semibold text-[#1F2937]">Categorias</h3>
+        </div>
+        <div className="p-6">
+          <Tabs defaultValue="receitas">
+            <TabsList className="flex h-auto flex-wrap gap-1.5 bg-transparent p-0 mb-6">
+              {GRUPOS.map((g) => (
+                <TabsTrigger
+                  key={g.key}
+                  value={g.key}
+                  className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-xs font-medium shadow-sm transition-all duration-200 data-[state=active]:border-[#215797] data-[state=active]:bg-[#215797] data-[state=active]:text-white"
+                >
+                  {g.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {GRUPOS.map((g) => (
+              <TabsContent key={g.key} value={g.key} className="animate-fade-in">
+                <ListaCategorias
+                  itens={categorias[g.key]}
+                  onChange={(v) => update(g.key, v)}
+                />
+              </TabsContent>
+            ))}
+          </Tabs>
+        </div>
+      </div>
     </div>
   );
 }

@@ -11,8 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { AppSidebar } from "@/components/financeiro/AppSidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { HeaderNav } from "@/components/financeiro/HeaderNav";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -27,7 +26,7 @@ function NotFoundComponent() {
         <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition-all duration-200 hover:bg-primary-light hover:shadow-lg"
+            className="btn-primary"
           >
             Voltar ao início
           </Link>
@@ -59,13 +58,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition-all duration-200 hover:bg-primary-light hover:shadow-lg"
+            className="btn-primary"
           >
             Tentar novamente
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-lg border border-primary bg-white px-6 py-2.5 text-sm font-medium text-primary transition-all duration-200 hover:bg-primary/5"
+            className="btn-secondary"
           >
             Voltar ao início
           </a>
@@ -95,6 +94,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
     ],
     links: [
+      {
+        rel: "preconnect",
+        href: "https://fonts.googleapis.com",
+      },
+      {
+        rel: "preconnect",
+        href: "https://fonts.gstatic.com",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,
@@ -131,36 +143,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SidebarProvider>
-        <div className="flex min-h-screen w-full bg-background">
-          <AppSidebar />
-          <div className="flex flex-1 flex-col">
-            <header className="glass-header sticky top-0 z-20 flex h-16 items-center gap-3 px-4 shadow-lg shadow-black/10 md:px-6">
-              <SidebarTrigger className="rounded-lg text-white/70 transition-all duration-200 hover:bg-white/10 hover:text-white" />
-              <div className="flex items-center gap-3">
-                <div className="flex flex-col leading-tight">
-                  <span className="text-xs font-semibold text-white/90 sm:text-sm tracking-wide">
-                    Artec Ambientes Climatizados
-                  </span>
-                  <span className="hidden text-[10px] text-white/50 sm:block sm:text-xs tracking-wide uppercase">
-                    Controle Financeiro
-                  </span>
-                </div>
-              </div>
-              <div className="flex-1" />
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-white/20 to-white/5 ring-2 ring-white/20 logo-glow sm:h-10 sm:w-10">
-                  <img src="/logo_artec.png" alt="Artec" className="h-6 w-6 rounded-full object-cover sm:h-7 sm:w-7" />
-                </div>
-              </div>
-            </header>
-            <main className="flex-1 animate-fade-in p-3 sm:p-4 md:p-6 lg:p-8">
-              <Outlet />
-            </main>
-          </div>
+      <HeaderNav />
+      <main className="pt-16 min-h-screen bg-background">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 py-6 sm:py-8 animate-fade-in">
+          <Outlet />
         </div>
-        <Toaster richColors position="top-right" />
-      </SidebarProvider>
+      </main>
+      <Toaster richColors position="top-right" />
     </QueryClientProvider>
   );
 }

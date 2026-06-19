@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useMemo, useState } from "react";
-import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Receipt } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -21,14 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useCategorias, useLancamentos } from "@/lib/financeiro/storage";
 import {
@@ -111,6 +102,14 @@ function LancamentosPage() {
       .sort((a, b) => b.data.localeCompare(a.data));
   }, [lancs, ano, mes, busca]);
 
+  const totalReceitas = filtrados
+    .filter((l) => l.tipo === "receita" || l.tipo === "receita_financeira")
+    .reduce((s, l) => s + l.valor, 0);
+
+  const totalDespesas = filtrados
+    .filter((l) => l.tipo === "custo_direto" || l.tipo === "despesa_operacional" || l.tipo === "despesa_financeira")
+    .reduce((s, l) => s + l.valor, 0);
+
   const novo = () => {
     setForm(emptyForm());
     setOpen(true);
@@ -158,214 +157,236 @@ function LancamentosPage() {
 
   return (
     <div className="space-y-6">
-        <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
-          <div className="min-w-0 flex-1">
-            <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">Lançamentos</h2>
-            <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
-              Cadastre receitas, custos e despesas.
-            </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-[#215797]/10 text-[#215797]">
+            <Receipt className="h-5 w-5" />
           </div>
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={novo} className="shrink-0 text-xs sm:text-sm">
-                <Plus className="mr-1.5 h-4 w-4" /> Novo
-              </Button>
-            </DialogTrigger>
-            <DialogContent key={open ? form.id || "novo" : "closed"} className="max-w-lg w-[95vw] sm:w-full">
-              <DialogHeader>
-                <DialogTitle className="text-primary">
-                  {editando ? "Editar lançamento" : "Novo lançamento"}
-                </DialogTitle>
-              </DialogHeader>
-              <div className="grid max-h-[60vh] gap-4 overflow-y-auto sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-muted-foreground">Data</Label>
-                  <Input
-                    type="date"
-                    value={form.data}
-                    onChange={(e) => setForm(prev => ({ ...prev, data: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-muted-foreground">Valor (R$)</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={form.valor || ""}
-                    onChange={(e) => setForm(prev => ({ ...prev, valor: parseFloat(e.target.value) || 0 }))}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-muted-foreground">Tipo</Label>
-                  <Select
-                    value={form.tipo}
-                    onValueChange={(v) =>
-                      setForm(prev => ({
-                        ...prev,
-                        tipo: v as TipoLancamento,
-                        categoria: "",
-                      }))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {TIPOS.map((t) => (
-                        <SelectItem key={t} value={t}>
-                          {TIPO_LABEL[t]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-muted-foreground">Status</Label>
-                  <Select
-                    value={form.status}
-                    onValueChange={(v) => setForm(prev => ({ ...prev, status: v as StatusLancamento }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {STATUS.map((s) => (
-                        <SelectItem key={s} value={s}>
-                          {STATUS_LABEL[s]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5 sm:col-span-2">
-                  <Label className="text-xs font-medium text-muted-foreground">Categoria</Label>
-                  <Select
-                    key={`cat-${form.tipo}-${form.id || "novo"}`}
-                    value={form.categoria}
-                    onValueChange={(v) => setForm(prev => ({ ...prev, categoria: v }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categoriasPorTipo(form.tipo).map((c) => (
-                        <SelectItem key={c} value={c}>
-                          {c}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5 sm:col-span-2">
-                  <Label className="text-xs font-medium text-muted-foreground">Descrição</Label>
-                  <Input
-                    value={form.descricao}
-                    onChange={(e) => setForm(prev => ({ ...prev, descricao: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-1.5 sm:col-span-2">
-                  <Label className="text-xs font-medium text-muted-foreground">
-                    Cliente ou Fornecedor
-                  </Label>
-                  <Input
-                    value={form.contraparte}
-                    onChange={(e) => setForm(prev => ({ ...prev, contraparte: e.target.value }))}
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setOpen(false)}>
-                  Cancelar
-                </Button>
-                <Button onClick={salvar}>Salvar</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <div>
+            <h1 className="text-[22px] font-semibold text-[#1F2937] tracking-tight">Lançamentos</h1>
+            <p className="text-sm text-[#9CA3AF] mt-0.5">Cadastre receitas, custos e despesas</p>
+          </div>
         </div>
-
-        <Card>
-          <CardHeader className="gap-3">
-            <CardTitle className="text-sm text-primary sm:text-base">Filtros</CardTitle>
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <div className="relative w-full sm:w-72">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <button onClick={novo} className="btn-primary text-sm">
+              <Plus className="h-4 w-4" /> Novo Lançamento
+            </button>
+          </DialogTrigger>
+          <DialogContent key={open ? form.id || "novo" : "closed"} className="max-w-lg w-[95vw] sm:w-full">
+            <DialogHeader>
+              <DialogTitle className="text-[#215797]">
+                {editando ? "Editar lançamento" : "Novo lançamento"}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="grid max-h-[60vh] gap-4 overflow-y-auto sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-[#9CA3AF]">Data</Label>
                 <Input
-                  placeholder="Pesquisar..."
-                  value={busca}
-                  onChange={(e) => setBusca(e.target.value)}
-                  className="w-full pl-10"
+                  type="date"
+                  value={form.data}
+                  onChange={(e) => setForm(prev => ({ ...prev, data: e.target.value }))}
                 />
               </div>
-              <PeriodoFiltro ano={ano} mes={mes} anos={anos} onAno={setAno} onMes={setMes} />
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-[#9CA3AF]">Valor (R$)</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={form.valor || ""}
+                  onChange={(e) => setForm(prev => ({ ...prev, valor: parseFloat(e.target.value) || 0 }))}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-[#9CA3AF]">Tipo</Label>
+                <Select
+                  value={form.tipo}
+                  onValueChange={(v) =>
+                    setForm(prev => ({
+                      ...prev,
+                      tipo: v as TipoLancamento,
+                      categoria: "",
+                    }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIPOS.map((t) => (
+                      <SelectItem key={t} value={t}>
+                        {TIPO_LABEL[t]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-[#9CA3AF]">Status</Label>
+                <Select
+                  value={form.status}
+                  onValueChange={(v) => setForm(prev => ({ ...prev, status: v as StatusLancamento }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {STATUS.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {STATUS_LABEL[s]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label className="text-xs font-medium text-[#9CA3AF]">Categoria</Label>
+                <Select
+                  key={`cat-${form.tipo}-${form.id || "novo"}`}
+                  value={form.categoria}
+                  onValueChange={(v) => setForm(prev => ({ ...prev, categoria: v }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categoriasPorTipo(form.tipo).map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label className="text-xs font-medium text-[#9CA3AF]">Descrição</Label>
+                <Input
+                  value={form.descricao}
+                  onChange={(e) => setForm(prev => ({ ...prev, descricao: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label className="text-xs font-medium text-[#9CA3AF]">Cliente ou Fornecedor</Label>
+                <Input
+                  value={form.contraparte}
+                  onChange={(e) => setForm(prev => ({ ...prev, contraparte: e.target.value }))}
+                />
+              </div>
             </div>
-          </CardHeader>
-        <CardContent>
-          <div className="table-scroll">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-xs sm:text-sm">Data</TableHead>
-                <TableHead className="hidden max-sm:hidden sm:table-cell">Tipo</TableHead>
-                <TableHead className="hidden sm:table-cell">Categoria</TableHead>
-                <TableHead className="text-xs sm:text-sm">Descrição</TableHead>
-                <TableHead className="hidden sm:table-cell">Cliente/Fornecedor</TableHead>
-                <TableHead className="text-right text-xs sm:text-sm">Valor</TableHead>
-                <TableHead className="hidden max-sm:hidden">Status</TableHead>
-                <TableHead className="w-16 sm:w-20" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+            <DialogFooter>
+              <button onClick={() => setOpen(false)} className="btn-secondary text-sm">
+                Cancelar
+              </button>
+              <button onClick={salvar} className="btn-primary text-sm">Salvar</button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+        <div className="kpi-card">
+          <div className="text-xs font-medium text-[#9CA3AF] uppercase tracking-wider">Total Lançamentos</div>
+          <div className="text-2xl font-bold text-[#1F2937] mt-1">{filtrados.length}</div>
+        </div>
+        <div className="kpi-card">
+          <div className="text-xs font-medium text-[#9CA3AF] uppercase tracking-wider">Receitas</div>
+          <div className="text-2xl font-bold text-[#215797] mt-1">{fmtBRL(totalReceitas)}</div>
+        </div>
+        <div className="kpi-card">
+          <div className="text-xs font-medium text-[#9CA3AF] uppercase tracking-wider">Despesas</div>
+          <div className="text-2xl font-bold text-[#EF4444] mt-1">{fmtBRL(totalDespesas)}</div>
+        </div>
+        <div className="kpi-card">
+          <div className="text-xs font-medium text-[#9CA3AF] uppercase tracking-wider">Saldo</div>
+          <div className={`text-2xl font-bold mt-1 ${totalReceitas - totalDespesas >= 0 ? "text-[#10B981]" : "text-[#EF4444]"}`}>
+            {fmtBRL(totalReceitas - totalDespesas)}
+          </div>
+        </div>
+      </div>
+
+      {/* Filters & Table */}
+      <div className="card-artec-static overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="relative w-full sm:w-72">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                placeholder="Pesquisar lançamentos..."
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                className="w-full pl-10 h-10 rounded-lg border border-gray-200 bg-white text-sm text-[#4B5563] placeholder:text-gray-400 px-3 focus:outline-none focus:ring-2 focus:ring-[#215797]/20 focus:border-[#215797] transition-all"
+              />
+            </div>
+            <PeriodoFiltro ano={ano} mes={mes} anos={anos} onAno={setAno} onMes={setMes} />
+          </div>
+        </div>
+        <div className="table-scroll">
+          <table className="w-full">
+            <thead>
+              <tr className="table-header">
+                <th className="table-header th">Data</th>
+                <th className="table-header th hidden sm:table-cell">Tipo</th>
+                <th className="table-header th hidden sm:table-cell">Categoria</th>
+                <th className="table-header th">Descrição</th>
+                <th className="table-header th hidden sm:table-cell">Cliente/Fornecedor</th>
+                <th className="table-header th text-right">Valor</th>
+                <th className="table-header th hidden sm:table-cell">Status</th>
+                <th className="table-header th w-20" />
+              </tr>
+            </thead>
+            <tbody>
               {filtrados.length === 0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={8}
-                    className="text-center text-sm text-muted-foreground py-12"
-                  >
+                <tr>
+                  <td colSpan={8} className="text-center py-12 text-sm text-[#9CA3AF]">
                     Nenhum lançamento encontrado.
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               )}
               {filtrados.map((l) => (
-                <TableRow key={l.id}>
-                  <TableCell className="font-medium whitespace-nowrap text-xs sm:text-sm p-2 sm:p-3">
+                <tr key={l.id} className="table-row">
+                  <td className="table-cell whitespace-nowrap font-medium text-xs sm:text-sm">
                     {new Date(l.data + "T00:00:00").toLocaleDateString("pt-BR")}
-                  </TableCell>
-                  <TableCell className="hidden max-sm:hidden sm:table-cell whitespace-nowrap text-xs sm:text-sm">{TIPO_LABEL[l.tipo]}</TableCell>
-                  <TableCell className="hidden sm:table-cell whitespace-nowrap">{l.categoria}</TableCell>
-                  <TableCell className="max-w-[100px] truncate text-xs sm:text-sm sm:max-w-none p-2 sm:p-3">
-                    <span className="sm:hidden">{l.descricao}</span>
-                    <span className="hidden sm:inline">{l.descricao}</span>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell whitespace-nowrap">{l.contraparte}</TableCell>
-                  <TableCell className="text-right font-semibold tabular-nums whitespace-nowrap text-xs sm:text-sm p-2 sm:p-3">
+                  </td>
+                  <td className="table-cell hidden sm:table-cell whitespace-nowrap text-xs sm:text-sm">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                      l.tipo === "receita" || l.tipo === "receita_financeira"
+                        ? "bg-emerald-50 text-emerald-700"
+                        : "bg-red-50 text-red-700"
+                    }`}>{TIPO_LABEL[l.tipo]}</span>
+                  </td>
+                  <td className="table-cell hidden sm:table-cell whitespace-nowrap">{l.categoria}</td>
+                  <td className="table-cell max-w-[120px] truncate sm:max-w-none">{l.descricao}</td>
+                  <td className="table-cell hidden sm:table-cell whitespace-nowrap">{l.contraparte}</td>
+                  <td className="table-cell text-right font-semibold tabular-nums whitespace-nowrap">
                     {fmtBRL(l.valor)}
-                  </TableCell>
-                  <TableCell className="hidden max-sm:hidden whitespace-nowrap">
-                    <Badge variant={statusVariant(l.status)} className="text-xs">{STATUS_LABEL[l.status]}</Badge>
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap p-1 sm:p-3">
-                    <div className="flex items-center gap-1 sm:gap-1.5">
-                      <div className={`h-2 w-2 shrink-0 rounded-full sm:hidden ${
+                  </td>
+                  <td className="table-cell hidden sm:table-cell whitespace-nowrap">
+                    <Badge variant={statusVariant(l.status)} className="text-xs">
+                      {STATUS_LABEL[l.status]}
+                    </Badge>
+                  </td>
+                  <td className="table-cell whitespace-nowrap">
+                    <div className="flex items-center gap-1">
+                      <div className={`h-2 w-2 rounded-full sm:hidden ${
                         l.status === "pendente" ? "bg-amber-400" :
-                        l.status === "pago" || l.status === "recebido" ? "bg-emerald-400" :
-                        "bg-gray-400"
+                        "bg-emerald-400"
                       }`} title={STATUS_LABEL[l.status]} />
-                      <Button size="icon" variant="ghost" onClick={() => editar(l)} className="h-7 w-7 sm:h-9 sm:w-9">
-                        <Pencil className="h-3 w-3 sm:h-4 sm:w-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" onClick={() => excluir(l.id)} className="h-7 w-7 sm:h-9 sm:w-9">
-                        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                      </Button>
+                      <button onClick={() => editar(l)} className="btn-secondary !h-8 !w-8 !p-0 !min-w-0">
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
+                      <button onClick={() => excluir(l.id)} className="btn-secondary !h-8 !w-8 !p-0 !min-w-0 !border-red-200 !text-red-500 hover:!bg-red-50">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
                     </div>
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               ))}
-            </TableBody>
-          </Table>
-          </div>
-        </CardContent>
-      </Card>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

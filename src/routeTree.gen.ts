@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as RelatoriosRouteImport } from './routes/relatorios'
 import { Route as LancamentosRouteImport } from './routes/lancamentos'
 import { Route as DreRouteImport } from './routes/dre'
+import { Route as DashboardProprietarioRouteImport } from './routes/dashboard-proprietario'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -30,6 +31,11 @@ const DreRoute = DreRouteImport.update({
   path: '/dre',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardProprietarioRoute = DashboardProprietarioRouteImport.update({
+  id: '/dashboard-proprietario',
+  path: '/dashboard-proprietario',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
   id: '/configuracoes',
   path: '/configuracoes',
@@ -44,6 +50,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/configuracoes': typeof ConfiguracoesRoute
+  '/dashboard-proprietario': typeof DashboardProprietarioRoute
   '/dre': typeof DreRoute
   '/lancamentos': typeof LancamentosRoute
   '/relatorios': typeof RelatoriosRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/configuracoes': typeof ConfiguracoesRoute
+  '/dashboard-proprietario': typeof DashboardProprietarioRoute
   '/dre': typeof DreRoute
   '/lancamentos': typeof LancamentosRoute
   '/relatorios': typeof RelatoriosRoute
@@ -59,19 +67,33 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/configuracoes': typeof ConfiguracoesRoute
+  '/dashboard-proprietario': typeof DashboardProprietarioRoute
   '/dre': typeof DreRoute
   '/lancamentos': typeof LancamentosRoute
   '/relatorios': typeof RelatoriosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/configuracoes' | '/dre' | '/lancamentos' | '/relatorios'
+  fullPaths:
+    | '/'
+    | '/configuracoes'
+    | '/dashboard-proprietario'
+    | '/dre'
+    | '/lancamentos'
+    | '/relatorios'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/configuracoes' | '/dre' | '/lancamentos' | '/relatorios'
+  to:
+    | '/'
+    | '/configuracoes'
+    | '/dashboard-proprietario'
+    | '/dre'
+    | '/lancamentos'
+    | '/relatorios'
   id:
     | '__root__'
     | '/'
     | '/configuracoes'
+    | '/dashboard-proprietario'
     | '/dre'
     | '/lancamentos'
     | '/relatorios'
@@ -80,6 +102,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ConfiguracoesRoute: typeof ConfiguracoesRoute
+  DashboardProprietarioRoute: typeof DashboardProprietarioRoute
   DreRoute: typeof DreRoute
   LancamentosRoute: typeof LancamentosRoute
   RelatoriosRoute: typeof RelatoriosRoute
@@ -108,6 +131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DreRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard-proprietario': {
+      id: '/dashboard-proprietario'
+      path: '/dashboard-proprietario'
+      fullPath: '/dashboard-proprietario'
+      preLoaderRoute: typeof DashboardProprietarioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/configuracoes': {
       id: '/configuracoes'
       path: '/configuracoes'
@@ -128,6 +158,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ConfiguracoesRoute: ConfiguracoesRoute,
+  DashboardProprietarioRoute: DashboardProprietarioRoute,
   DreRoute: DreRoute,
   LancamentosRoute: LancamentosRoute,
   RelatoriosRoute: RelatoriosRoute,

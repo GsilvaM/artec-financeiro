@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Download, TrendingUp, TrendingDown, Wallet, Receipt, ArrowRightLeft } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Download, TrendingUp, TrendingDown, Wallet, BarChart3, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -11,14 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { exportarCSV, useLancamentos } from "@/lib/financeiro/storage";
 import { anosDisponiveis, filtrarPorPeriodo, fmtBRL } from "@/lib/financeiro/calc";
 import { PeriodoFiltro } from "@/components/financeiro/PeriodoFiltro";
@@ -81,172 +71,117 @@ function RelatoriosPage() {
     };
   }, [filtrados]);
 
+  const cards = [
+    { label: "Total Recebido", value: fmtBRL(resumo.totalRecebido), icon: <TrendingUp className="h-5 w-5" />, color: "#215797" },
+    { label: "Total Pago", value: fmtBRL(resumo.totalPago), icon: <TrendingDown className="h-5 w-5" />, color: "#EF4444" },
+    { label: "Saldo do Período", value: fmtBRL(resumo.saldo), icon: <Wallet className="h-5 w-5" />, color: "#10B981" },
+    { label: "Qtd. Receitas", value: String(resumo.qtdReceitas), icon: <BarChart3 className="h-5 w-5" />, color: "#6B2FD6" },
+    { label: "Qtd. Despesas", value: String(resumo.qtdDespesas), icon: <TrendingDown className="h-5 w-5" />, color: "#EF4444" },
+  ];
+
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
-        <div className="min-w-0 flex-1">
-          <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">Relatórios</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
-            Resumo do período e tabela exportável em CSV.
-          </p>
-        </div>
-        <Button onClick={() => exportarCSV(filtrados)} className="shrink-0 text-xs sm:text-sm">
-          <Download className="mr-1.5 h-4 w-4" /> Exportar CSV
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4 lg:grid-cols-5">
-        <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
-          <CardContent className="flex items-center gap-2 p-2 sm:gap-4 sm:p-5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#215797]/10 text-[#215797] sm:h-11 sm:w-11">
-              <TrendingUp className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
-                Total Recebido
-              </p>
-              <p className="text-[11px] font-bold text-[#215797] tabular-nums sm:text-lg">
-                {fmtBRL(resumo.totalRecebido)}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
-          <CardContent className="flex items-center gap-2 p-2 sm:gap-4 sm:p-5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#EB4134]/10 text-[#EB4134] sm:h-11 sm:w-11">
-              <TrendingDown className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
-                Total Pago
-              </p>
-              <p className="text-[11px] font-bold text-[#EB4134] tabular-nums sm:text-lg">
-                {fmtBRL(resumo.totalPago)}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
-          <CardContent className="flex items-center gap-2 p-2 sm:gap-4 sm:p-5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#2783C3]/10 text-[#2783C3] sm:h-11 sm:w-11">
-              <Wallet className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
-                Saldo do Período
-              </p>
-              <p className="text-[11px] font-bold text-[#2783C3] tabular-nums sm:text-lg">
-                {fmtBRL(resumo.saldo)}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
-          <CardContent className="flex items-center gap-2 p-2 sm:gap-4 sm:p-5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#2C3A5C]/10 text-[#2C3A5C] sm:h-11 sm:w-11">
-              <Receipt className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
-                Qtd. Receitas
-              </p>
-              <p className="text-[11px] font-bold text-[#2C3A5C] tabular-nums sm:text-lg">{resumo.qtdReceitas}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
-          <CardContent className="flex items-center gap-2 p-2 sm:gap-4 sm:p-5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#EB4134]/10 text-[#EB4134] sm:h-11 sm:w-11">
-              <ArrowRightLeft className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
-                Qtd. Despesas
-              </p>
-              <p className="text-[11px] font-bold text-[#EB4134] tabular-nums sm:text-lg">{resumo.qtdDespesas}</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader className="gap-3">
-          <CardTitle className="text-sm text-primary sm:text-base">Filtros</CardTitle>
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <PeriodoFiltro ano={ano} mes={mes} anos={anos} onAno={setAno} onMes={setMes} />
-            <Select value={cat} onValueChange={setCat}>
-              <SelectTrigger className="w-full sm:w-48 border-primary/20 bg-white">
-                <SelectValue placeholder="Categoria" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todas">Todas as categorias</SelectItem>
-                {categoriasDisponiveis.map((c) => (
-                  <SelectItem key={c} value={c}>
-                    {c}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-[#215797]/10 text-[#215797]">
+            <FileText className="h-5 w-5" />
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="table-scroll">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-xs sm:text-sm">Data</TableHead>
-                <TableHead className="hidden max-sm:hidden sm:table-cell">Tipo</TableHead>
-                <TableHead className="hidden sm:table-cell">Categoria</TableHead>
-                <TableHead className="text-xs sm:text-sm">Descrição</TableHead>
-                <TableHead className="hidden sm:table-cell">Cliente/Fornecedor</TableHead>
-                <TableHead className="text-right text-xs sm:text-sm">Valor</TableHead>
-                <TableHead className="hidden max-sm:hidden">Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <div>
+            <h1 className="text-[22px] font-semibold text-[#1F2937] tracking-tight">Relatórios</h1>
+            <p className="text-sm text-[#9CA3AF] mt-0.5">Resumo do período e exportação de dados</p>
+          </div>
+        </div>
+        <button onClick={() => exportarCSV(filtrados)} className="btn-primary text-sm">
+          <Download className="h-4 w-4" /> Exportar CSV
+        </button>
+      </div>
+
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+        {cards.map((card) => (
+          <div key={card.label} className="kpi-card">
+            <div className="flex items-start justify-between mb-3">
+              <div className="kpi-icon-wrapper" style={{ background: `${card.color}15` }}>
+                <div style={{ color: card.color }}>{card.icon}</div>
+              </div>
+            </div>
+            <div className="kpi-value" style={{ color: card.color }}>{card.value}</div>
+            <div className="kpi-label mt-0.5">{card.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="card-artec-static overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h3 className="text-base font-semibold text-[#1F2937]">Filtros</h3>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <PeriodoFiltro ano={ano} mes={mes} anos={anos} onAno={setAno} onMes={setMes} />
+              <Select value={cat} onValueChange={setCat}>
+                <SelectTrigger className="w-full sm:w-48 border-gray-200 bg-white">
+                  <SelectValue placeholder="Categoria" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todas">Todas as categorias</SelectItem>
+                  {categoriasDisponiveis.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+        <div className="table-scroll">
+          <table className="w-full">
+            <thead>
+              <tr className="table-header">
+                <th className="table-header th">Data</th>
+                <th className="table-header th hidden sm:table-cell">Tipo</th>
+                <th className="table-header th hidden sm:table-cell">Categoria</th>
+                <th className="table-header th">Descrição</th>
+                <th className="table-header th hidden sm:table-cell">Cliente/Fornecedor</th>
+                <th className="table-header th text-right">Valor</th>
+                <th className="table-header th hidden sm:table-cell">Status</th>
+              </tr>
+            </thead>
+            <tbody>
               {filtrados.length === 0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={7}
-                    className="text-center py-12 text-sm text-muted-foreground"
-                  >
+                <tr>
+                  <td colSpan={7} className="text-center py-12 text-sm text-[#9CA3AF]">
                     Nenhum lançamento no período.
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               )}
               {filtrados.map((l) => (
-                <TableRow key={l.id}>
-                  <TableCell className="font-medium whitespace-nowrap text-xs sm:text-sm p-2 sm:p-3">
+                <tr key={l.id} className="table-row">
+                  <td className="table-cell whitespace-nowrap font-medium text-xs sm:text-sm">
                     {new Date(l.data + "T00:00:00").toLocaleDateString("pt-BR")}
-                  </TableCell>
-                  <TableCell className="hidden max-sm:hidden sm:table-cell whitespace-nowrap text-xs sm:text-sm">{TIPO_LABEL[l.tipo]}</TableCell>
-                  <TableCell className="hidden sm:table-cell whitespace-nowrap">{l.categoria}</TableCell>
-                  <TableCell className="max-w-[100px] truncate text-xs sm:text-sm sm:max-w-none p-2 sm:p-3">
-                    <span className="flex items-center gap-1.5">
-                      <span className={`h-1.5 w-1.5 shrink-0 rounded-full sm:hidden ${
-                        l.status === "pendente" ? "bg-amber-400" :
-                        l.status === "pago" || l.status === "recebido" ? "bg-emerald-400" :
-                        "bg-gray-400"
-                      }`} />
-                      {l.descricao}
-                    </span>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell whitespace-nowrap">{l.contraparte}</TableCell>
-                  <TableCell className="text-right font-semibold tabular-nums whitespace-nowrap text-xs sm:text-sm p-2 sm:p-3">
+                  </td>
+                  <td className="table-cell hidden sm:table-cell whitespace-nowrap text-xs sm:text-sm">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                      l.tipo === "receita" || l.tipo === "receita_financeira"
+                        ? "bg-emerald-50 text-emerald-700"
+                        : "bg-red-50 text-red-700"
+                    }`}>{TIPO_LABEL[l.tipo]}</span>
+                  </td>
+                  <td className="table-cell hidden sm:table-cell whitespace-nowrap">{l.categoria}</td>
+                  <td className="table-cell max-w-[120px] truncate sm:max-w-none">{l.descricao}</td>
+                  <td className="table-cell hidden sm:table-cell whitespace-nowrap">{l.contraparte}</td>
+                  <td className="table-cell text-right font-semibold tabular-nums whitespace-nowrap">
                     {fmtBRL(l.valor)}
-                  </TableCell>
-                  <TableCell className="hidden max-sm:hidden whitespace-nowrap">
+                  </td>
+                  <td className="table-cell hidden sm:table-cell whitespace-nowrap">
                     <Badge variant={l.status === "pendente" ? "secondary" : "default"} className="text-xs">
                       {STATUS_LABEL[l.status]}
                     </Badge>
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               ))}
-            </TableBody>
-          </Table>
-          </div>
-        </CardContent>
-      </Card>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
