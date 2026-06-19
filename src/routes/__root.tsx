@@ -135,21 +135,23 @@ function RootComponent() {
         <div className="flex min-h-screen w-full bg-background">
           <AppSidebar />
           <div className="flex flex-1 flex-col">
-            <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-white/10 bg-gradient-to-r from-[#2c3a5c] to-[#215797] px-4 shadow-lg shadow-[#215797]/10 backdrop-blur-none md:px-6">
-              <SidebarTrigger className="rounded-lg text-white/80 transition-all duration-200 hover:bg-white/10 hover:text-white" />
+            <header className="glass-header sticky top-0 z-20 flex h-16 items-center gap-3 px-4 shadow-lg shadow-black/10 md:px-6">
+              <SidebarTrigger className="rounded-lg text-white/70 transition-all duration-200 hover:bg-white/10 hover:text-white" />
               <div className="flex items-center gap-3">
                 <div className="flex flex-col leading-tight">
-                  <span className="text-xs font-semibold text-white/90 sm:text-sm">
+                  <span className="text-xs font-semibold text-white/90 sm:text-sm tracking-wide">
                     Artec Ambientes Climatizados
                   </span>
-                  <span className="hidden text-[10px] text-white/60 sm:block sm:text-xs">
+                  <span className="hidden text-[10px] text-white/50 sm:block sm:text-xs tracking-wide uppercase">
                     Controle Financeiro
                   </span>
                 </div>
               </div>
               <div className="flex-1" />
               <div className="flex items-center gap-3">
-                <img src="/logo_artec.png" alt="Artec" className="h-8 w-auto sm:h-9" />
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-white/20 to-white/5 ring-2 ring-white/20 logo-glow sm:h-10 sm:w-10">
+                  <img src="/logo_artec.png" alt="Artec" className="h-6 w-6 rounded-full object-cover sm:h-7 sm:w-7" />
+                </div>
               </div>
             </header>
             <main className="flex-1 animate-fade-in p-3 sm:p-4 md:p-6 lg:p-8">

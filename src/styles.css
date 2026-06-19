@@ -155,6 +155,35 @@
     background: linear-gradient(135deg, #2c3a5c 0%, #215797 100%);
   }
 
+  .bg-sidebar-gradient {
+    background: linear-gradient(180deg, #2c3a5c 0%, #1e2d4a 100%);
+  }
+
+  .logo-glow {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15), 0 0 20px rgba(39, 131, 195, 0.3);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .logo-glow:hover {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3), 0 0 30px rgba(39, 131, 195, 0.5);
+  }
+
+  .glass-header {
+    background: linear-gradient(135deg, rgba(44, 58, 92, 0.92) 0%, rgba(33, 87, 151, 0.92) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .sidebar-item-hover {
+    transition: all 0.2s ease;
+  }
+
+  .sidebar-item-hover:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(2px);
+  }
+
   .shadow-card {
     box-shadow:
       0 1px 3px rgba(33, 87, 151, 0.08),
