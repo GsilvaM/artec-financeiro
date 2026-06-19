@@ -25,6 +25,13 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
+      <SidebarHeader className="flex items-center gap-3 border-b border-sidebar-border px-4 py-4 group-data-[collapsible=icon]:px-3">
+        <img src="/logo_artec.png" alt="Artec" className="h-8 w-auto shrink-0" />
+        <div className="flex flex-col leading-tight group-data-[collapsible=icon]:hidden">
+          <span className="text-sm font-semibold text-sidebar-foreground">Artec</span>
+          <span className="text-[10px] text-sidebar-foreground/60">Financeiro</span>
+        </div>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>

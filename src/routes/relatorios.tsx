@@ -95,75 +95,75 @@ function RelatoriosPage() {
         </Button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <Card>
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#215797]/10 text-[#215797]">
-              <TrendingUp className="h-5 w-5" />
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-5">
+        <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
+          <CardContent className="flex items-center gap-3 p-3 sm:gap-4 sm:p-5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#215797]/10 text-[#215797] sm:h-11 sm:w-11">
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <div className="min-w-0">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
                 Total Recebido
               </p>
-              <p className="text-lg font-bold text-[#215797] tabular-nums">
+              <p className="text-sm font-bold text-[#215797] tabular-nums sm:text-lg">
                 {fmtBRL(resumo.totalRecebido)}
               </p>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#EB4134]/10 text-[#EB4134]">
-              <TrendingDown className="h-5 w-5" />
+        <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
+          <CardContent className="flex items-center gap-3 p-3 sm:gap-4 sm:p-5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#EB4134]/10 text-[#EB4134] sm:h-11 sm:w-11">
+              <TrendingDown className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <div className="min-w-0">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
                 Total Pago
               </p>
-              <p className="text-lg font-bold text-[#EB4134] tabular-nums">
+              <p className="text-sm font-bold text-[#EB4134] tabular-nums sm:text-lg">
                 {fmtBRL(resumo.totalPago)}
               </p>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#2783C3]/10 text-[#2783C3]">
-              <Wallet className="h-5 w-5" />
+        <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
+          <CardContent className="flex items-center gap-3 p-3 sm:gap-4 sm:p-5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#2783C3]/10 text-[#2783C3] sm:h-11 sm:w-11">
+              <Wallet className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <div className="min-w-0">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
                 Saldo do Período
               </p>
-              <p className="text-lg font-bold text-[#2783C3] tabular-nums">
+              <p className="text-sm font-bold text-[#2783C3] tabular-nums sm:text-lg">
                 {fmtBRL(resumo.saldo)}
               </p>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#2C3A5C]/10 text-[#2C3A5C]">
-              <Receipt className="h-5 w-5" />
+        <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover">
+          <CardContent className="flex items-center gap-3 p-3 sm:gap-4 sm:p-5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#2C3A5C]/10 text-[#2C3A5C] sm:h-11 sm:w-11">
+              <Receipt className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <div className="min-w-0">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
                 Qtd. Receitas
               </p>
-              <p className="text-lg font-bold text-[#2C3A5C] tabular-nums">{resumo.qtdReceitas}</p>
+              <p className="text-sm font-bold text-[#2C3A5C] tabular-nums sm:text-lg">{resumo.qtdReceitas}</p>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#EB4134]/10 text-[#EB4134]">
-              <ArrowRightLeft className="h-5 w-5" />
+        <Card className="animate-slide-up transition-all duration-200 hover:shadow-card-hover sm:col-span-2 lg:col-span-1">
+          <CardContent className="flex items-center gap-3 p-3 sm:gap-4 sm:p-5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#EB4134]/10 text-[#EB4134] sm:h-11 sm:w-11">
+              <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <div className="min-w-0">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
                 Qtd. Despesas
               </p>
-              <p className="text-lg font-bold text-[#EB4134] tabular-nums">{resumo.qtdDespesas}</p>
+              <p className="text-sm font-bold text-[#EB4134] tabular-nums sm:text-lg">{resumo.qtdDespesas}</p>
             </div>
           </CardContent>
         </Card>
@@ -190,6 +190,7 @@ function RelatoriosPage() {
           </div>
         </CardHeader>
         <CardContent>
+          <div className="table-scroll">
           <Table>
             <TableHeader>
               <TableRow>
@@ -234,6 +235,7 @@ function RelatoriosPage() {
               ))}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

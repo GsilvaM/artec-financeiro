@@ -176,7 +176,7 @@ function LancamentosPage() {
                 {editando ? "Editar lançamento" : "Novo lançamento"}
               </DialogTitle>
             </DialogHeader>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label className="text-xs font-medium text-muted-foreground">Data</Label>
                 <Input
@@ -292,13 +292,14 @@ function LancamentosPage() {
                 placeholder="Pesquisar..."
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
-                className="w-72 pl-10"
+                className="w-full sm:w-72 pl-10"
               />
             </div>
             <PeriodoFiltro ano={ano} mes={mes} anos={anos} onAno={setAno} onMes={setMes} />
           </div>
         </CardHeader>
         <CardContent>
+          <div className="table-scroll">
           <Table>
             <TableHeader>
               <TableRow>
@@ -352,6 +353,7 @@ function LancamentosPage() {
               ))}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

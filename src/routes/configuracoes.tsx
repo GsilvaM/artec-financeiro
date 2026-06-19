@@ -145,12 +145,12 @@ function ConfigPage() {
       </div>
 
       <Tabs defaultValue="receitas">
-        <TabsList className="flex flex-wrap h-auto gap-1 bg-transparent p-0">
+        <TabsList className="flex h-auto flex-wrap gap-1.5 bg-transparent p-0">
           {GRUPOS.map((g) => (
             <TabsTrigger
               key={g.key}
               value={g.key}
-              className="rounded-lg border border-border bg-white px-4 py-2 text-xs font-medium data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-white"
+              className="rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-medium shadow-sm transition-all duration-200 sm:px-4 sm:py-2 sm:text-xs data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-white"
             >
               {g.label}
             </TabsTrigger>

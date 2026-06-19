@@ -135,22 +135,24 @@ function RootComponent() {
         <div className="flex min-h-screen w-full bg-background">
           <AppSidebar />
           <div className="flex flex-1 flex-col">
-            <header className="bg-gradient-header sticky top-0 z-20 flex h-16 items-center gap-3 px-4 shadow-md md:px-6">
-              <SidebarTrigger className="text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200" />
+            <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-white/10 bg-gradient-to-r from-[#2c3a5c] to-[#215797] px-4 shadow-lg shadow-[#215797]/10 backdrop-blur-none md:px-6">
+              <SidebarTrigger className="rounded-lg text-white/80 transition-all duration-200 hover:bg-white/10 hover:text-white" />
               <div className="flex items-center gap-3">
-                <div className="hidden flex-col leading-tight sm:flex">
-                  <span className="text-sm font-semibold text-white">
+                <div className="flex flex-col leading-tight">
+                  <span className="text-xs font-semibold text-white/90 sm:text-sm">
                     Artec Ambientes Climatizados
                   </span>
-                  <span className="text-xs text-white/70">Controle Financeiro</span>
+                  <span className="hidden text-[10px] text-white/60 sm:block sm:text-xs">
+                    Controle Financeiro
+                  </span>
                 </div>
               </div>
               <div className="flex-1" />
               <div className="flex items-center gap-3">
-                <img src="/logo_artec.png" alt="Artec" className="h-9 w-auto" />
+                <img src="/logo_artec.png" alt="Artec" className="h-8 w-auto sm:h-9" />
               </div>
             </header>
-            <main className="flex-1 animate-fade-in p-4 md:p-6 lg:p-8">
+            <main className="flex-1 animate-fade-in p-3 sm:p-4 md:p-6 lg:p-8">
               <Outlet />
             </main>
           </div>

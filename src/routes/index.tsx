@@ -53,16 +53,16 @@ interface KpiCardProps {
 
 function KpiCard({ label, value, hint, icon, colorClass }: KpiCardProps) {
   return (
-    <Card className="overflow-hidden">
+    <Card className="animate-slide-up overflow-hidden transition-all duration-200 hover:shadow-card-hover">
       <CardContent className="p-0">
         <div className="flex items-stretch">
-          <div className={`flex w-14 items-center justify-center ${colorClass}`}>{icon}</div>
-          <div className="flex flex-1 flex-col justify-center px-4 py-4">
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <div className={`flex w-14 items-center justify-center sm:w-16 ${colorClass}`}>{icon}</div>
+          <div className="flex flex-1 flex-col justify-center px-3 py-3 sm:px-4 sm:py-4">
+            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
               {label}
             </span>
-            <span className="mt-0.5 text-xl font-bold text-foreground">{value}</span>
-            {hint && <span className="mt-0.5 text-xs text-muted-foreground">{hint}</span>}
+            <span className="mt-0.5 text-base font-bold text-foreground sm:text-xl">{value}</span>
+            {hint && <span className="mt-0.5 text-[10px] text-muted-foreground sm:text-xs">{hint}</span>}
           </div>
         </div>
       </CardContent>
@@ -144,14 +144,14 @@ function Dashboard() {
         />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+        <Card className="animate-slide-up">
           <CardHeader>
-            <CardTitle className="text-base text-primary">
+            <CardTitle className="text-sm text-primary sm:text-base">
               Receita x Despesas ({ano === "todos" ? new Date().getFullYear() : ano})
             </CardTitle>
           </CardHeader>
-          <CardContent className="h-72">
+          <CardContent className="h-56 sm:h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={dadosMensais}>
                 <CartesianGrid strokeDasharray="3 3" opacity={0.3} stroke="#D6E2ED" />
@@ -173,11 +173,11 @@ function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="animate-slide-up">
           <CardHeader>
-            <CardTitle className="text-base text-primary">Evolução do Lucro</CardTitle>
+            <CardTitle className="text-sm text-primary sm:text-base">Evolução do Lucro</CardTitle>
           </CardHeader>
-          <CardContent className="h-72">
+          <CardContent className="h-56 sm:h-72">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={dadosMensais}>
                 <CartesianGrid strokeDasharray="3 3" opacity={0.3} stroke="#D6E2ED" />
@@ -204,11 +204,11 @@ function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="animate-slide-up">
           <CardHeader>
-            <CardTitle className="text-base text-primary">Evolução do Faturamento</CardTitle>
+            <CardTitle className="text-sm text-primary sm:text-base">Evolução do Faturamento</CardTitle>
           </CardHeader>
-          <CardContent className="h-72">
+          <CardContent className="h-56 sm:h-72">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={dadosMensais}>
                 <CartesianGrid strokeDasharray="3 3" opacity={0.3} stroke="#D6E2ED" />
@@ -235,9 +235,9 @@ function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="animate-slide-up">
           <CardHeader>
-            <CardTitle className="text-base text-primary">Despesas por Categoria</CardTitle>
+            <CardTitle className="text-sm text-primary sm:text-base">Despesas por Categoria</CardTitle>
           </CardHeader>
           <CardContent className="h-72">
             {despesasCat.length === 0 ? (
