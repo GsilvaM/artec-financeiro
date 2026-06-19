@@ -85,7 +85,7 @@ export async function listCategorias(): Promise<Categorias> {
     }
   }
 
-  return groups as Categorias;
+  return groups as unknown as Categorias;
 }
 
 export async function replaceAllCategorias(categorias: Categorias): Promise<void> {
