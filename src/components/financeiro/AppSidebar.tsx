@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { LayoutDashboard, Receipt, FileText, BarChart3, Settings } from "lucide-react";
 import {
   Sidebar,
@@ -25,9 +26,9 @@ export function AppSidebar() {
   const { setOpenMobile } = useSidebar();
   const isActive = (p: string) => (p === "/" ? pathname === "/" : pathname.startsWith(p));
 
-  const navigate = () => {
+  useEffect(() => {
     setOpenMobile(false);
-  };
+  }, [pathname, setOpenMobile]);
 
   return (
     <Sidebar collapsible="icon">
@@ -51,7 +52,7 @@ export function AppSidebar() {
                       isActive={active}
                       className="relative"
                     >
-                      <Link to={item.url} onClick={navigate} className="flex items-center gap-3">
+                      <Link to={item.url} className="flex items-center gap-3">
                         {active && (
                           <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-sidebar-primary max-sm:hidden group-data-[collapsible=icon]:hidden" />
                         )}
