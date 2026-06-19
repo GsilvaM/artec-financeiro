@@ -9,6 +9,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 const items = [
@@ -21,7 +22,12 @@ const items = [
 
 export function AppSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { setOpenMobile } = useSidebar();
   const isActive = (p: string) => (p === "/" ? pathname === "/" : pathname.startsWith(p));
+
+  const navigate = () => {
+    setOpenMobile(false);
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -45,7 +51,7 @@ export function AppSidebar() {
                       isActive={active}
                       className="relative"
                     >
-                      <Link to={item.url} className="flex items-center gap-3">
+                      <Link to={item.url} onClick={navigate} className="flex items-center gap-3">
                         {active && (
                           <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-sidebar-primary max-sm:hidden group-data-[collapsible=icon]:hidden" />
                         )}
