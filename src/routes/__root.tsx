@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -13,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { HeaderNav } from "@/components/financeiro/HeaderNav";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider, useAuth } from "@/lib/auth/auth";
 
 function NotFoundComponent() {
   return (
@@ -138,17 +140,57 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function AuthGuard({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
+  const router = useRouter();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!user && location.pathname !== "/login") {
+      router.navigate({ to: "/login" });
+    }
+  }, [user, location.pathname, router]);
+
+  if (!user && location.pathname !== "/login") return null;
+
+  return <>{children}</>;
+}
+
+function AppShell() {
+  const { user } = useAuth();
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/login";
+
+  if (isLoginPage) {
+    return (
+      <main className="min-h-screen bg-background">
+        <Outlet />
+      </main>
+    );
+  }
+
+  return (
+    <>
+      {user && <HeaderNav />}
+      <main className={`min-h-screen bg-background ${user ? "pt-16" : ""}`}>
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 py-6 sm:py-8 animate-fade-in">
+          <Outlet />
+        </div>
+      </main>
+    </>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <HeaderNav />
-      <main className="pt-16 min-h-screen bg-background">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 py-6 sm:py-8 animate-fade-in">
-          <Outlet />
-        </div>
-      </main>
+      <AuthProvider>
+        <AuthGuard>
+          <AppShell />
+        </AuthGuard>
+      </AuthProvider>
       <Toaster richColors position="top-right" />
     </QueryClientProvider>
   );

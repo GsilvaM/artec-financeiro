@@ -23,7 +23,9 @@ import {
   DollarSign,
   PieChart,
   Scale,
+  Shield,
 } from "lucide-react";
+import { useAuth } from "@/lib/auth/auth";
 
 interface NavItem {
   label: string;
@@ -170,6 +172,7 @@ function SimpleNavItem({ item }: { item: NavItem }) {
 function MobileNav() {
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     setOpen(false);
@@ -177,6 +180,12 @@ function MobileNav() {
 
   const isActive = (to: string) =>
     to === "/" ? pathname === "/" : pathname.startsWith(to);
+
+  function handleLogout() {
+    setOpen(false);
+    logout();
+    window.location.href = "/login";
+  }
 
   return (
     <>
@@ -216,6 +225,7 @@ function MobileNav() {
                       key={entry.to}
                       to={entry.to as any}
                       className={`mobile-nav-item ${active ? "mobile-nav-item-active" : ""}`}
+                      onClick={() => setOpen(false)}
                     >
                       {entry.icon}
                       <span>{entry.label}</span>
@@ -232,6 +242,7 @@ function MobileNav() {
                           key={item.to}
                           to={item.to as any}
                           className={`mobile-nav-item ${active ? "mobile-nav-item-active" : ""}`}
+                          onClick={() => setOpen(false)}
                         >
                           {item.icon}
                           <span>{item.label}</span>
@@ -241,6 +252,26 @@ function MobileNav() {
                   </div>
                 );
               })}
+
+              <div className="border-t border-gray-100 mt-2 pt-2">
+                {user?.role === "admin" && (
+                  <Link
+                    to={"/admin" as any}
+                    className="mobile-nav-item"
+                    onClick={() => setOpen(false)}
+                  >
+                    <Shield className="h-4 w-4" />
+                    <span>Administração</span>
+                  </Link>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="mobile-nav-item w-full text-left"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Sair</span>
+                </button>
+              </div>
             </div>
           </div>
         </>
@@ -250,6 +281,13 @@ function MobileNav() {
 }
 
 export function HeaderNav() {
+  const { user, logout } = useAuth();
+
+  function handleLogout() {
+    logout();
+    window.location.href = "/login";
+  }
+
   return (
     <header className="bg-header-gradient header-shadow fixed top-0 left-0 right-0 z-50 h-16">
       <div className="flex h-full items-center px-4 lg:px-6">
@@ -278,6 +316,16 @@ export function HeaderNav() {
 
         {/* Right side */}
         <div className="flex items-center gap-2">
+          {user?.role === "admin" && (
+            <Link
+              to="/admin"
+              className="hidden sm:flex items-center justify-center h-9 w-9 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all"
+              title="Administração"
+            >
+              <Shield className="h-4.5 w-4.5" />
+            </Link>
+          )}
+
           <button className="hidden sm:flex items-center justify-center h-9 w-9 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all relative">
             <Bell className="h-4.5 w-4.5" />
             <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[#EF4444] ring-1 ring-white" />
@@ -287,10 +335,14 @@ export function HeaderNav() {
             <div className="flex items-center justify-center h-8 w-8 rounded-full bg-white/15 text-white">
               <User className="h-4 w-4" />
             </div>
-            <div className="text-sm text-white/80 font-medium">Fred</div>
+            <div className="text-sm text-white/80 font-medium">{user?.name ?? "Usuário"}</div>
           </div>
 
-          <button className="hidden sm:flex items-center justify-center h-9 w-9 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all">
+          <button
+            onClick={handleLogout}
+            className="hidden sm:flex items-center justify-center h-9 w-9 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all"
+            title="Sair"
+          >
             <LogOut className="h-4.5 w-4.5" />
           </button>
 

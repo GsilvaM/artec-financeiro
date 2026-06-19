@@ -55,12 +55,6 @@ const CHART_COLORS = ["#215797", "#6B2FD6", "#10B981", "#F59E0B", "#EF4444"];
 
 const META_MENSAL = 85000;
 
-function formatShortBRL(n: number) {
-  if (n >= 1_000_000) return `R$ ${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `R$ ${(n / 1_000).toFixed(n >= 10_000 ? 0 : 1)}K`;
-  return fmtBRL(n);
-}
-
 interface KpiCardProps {
   label: string;
   value: string;
@@ -228,7 +222,7 @@ function Dashboard() {
       <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
         <KpiCard
           label="Receita"
-          value={formatShortBRL(dre.receitaBruta)}
+          value={fmtBRL(dre.receitaBruta)}
           icon={<TrendingUp className="h-5 w-5" />}
           color="#215797"
           trend={tendenciaReceita}
@@ -236,7 +230,7 @@ function Dashboard() {
         />
         <KpiCard
           label="Lucro Líquido"
-          value={formatShortBRL(dre.lucroLiquido)}
+          value={fmtBRL(dre.lucroLiquido)}
           icon={<DollarSign className="h-5 w-5" />}
           color="#10B981"
           trend={tendenciaLucro}
@@ -247,18 +241,18 @@ function Dashboard() {
           value={fmtPct(metaAtingida)}
           icon={<Target className="h-5 w-5" />}
           color="#F59E0B"
-          hint={`Meta: ${formatShortBRL(META_MENSAL)}`}
+          hint={`Meta: ${fmtBRL(META_MENSAL)}`}
         />
         <KpiCard
           label="Ponto de Equilíbrio"
-          value={formatShortBRL(pontoEquilibrio)}
+          value={fmtBRL(pontoEquilibrio)}
           icon={<PiggyBank className="h-5 w-5" />}
           color="#6B2FD6"
           hint={dre.receitaBruta >= pontoEquilibrio ? "Equilíbrio atingido" : "Abaixo do equilíbrio"}
         />
         <KpiCard
           label="Saldo Projetado"
-          value={formatShortBRL(saldoProjetado)}
+          value={fmtBRL(saldoProjetado)}
           icon={<BarChart3 className="h-5 w-5" />}
           color={saldoProjetado >= 0 ? "#215797" : "#EF4444"}
           trend={saldoProjetado >= 0 ? "up" : "down"}

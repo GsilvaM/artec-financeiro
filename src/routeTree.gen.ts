@@ -9,21 +9,102 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UsuariosRouteImport } from './routes/usuarios'
+import { Route as TecnicosRouteImport } from './routes/tecnicos'
+import { Route as ServicosCadastroRouteImport } from './routes/servicos-cadastro'
+import { Route as ServicosRouteImport } from './routes/servicos'
+import { Route as RentabilidadeRouteImport } from './routes/rentabilidade'
+import { Route as RelatoriosOperacionaisRouteImport } from './routes/relatorios-operacionais'
+import { Route as RelatoriosCentrosCustoRouteImport } from './routes/relatorios-centros-custo'
 import { Route as RelatoriosRouteImport } from './routes/relatorios'
+import { Route as ProdutividadeRouteImport } from './routes/produtividade'
+import { Route as PontoEquilibrioRouteImport } from './routes/ponto-equilibrio'
+import { Route as PermissoesRouteImport } from './routes/permissoes'
+import { Route as MetasRouteImport } from './routes/metas'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as LancamentosRouteImport } from './routes/lancamentos'
+import { Route as FluxoCaixaRouteImport } from './routes/fluxo-caixa'
 import { Route as DreRouteImport } from './routes/dre'
 import { Route as DashboardProprietarioRouteImport } from './routes/dashboard-proprietario'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as ColaboradoresRouteImport } from './routes/colaboradores'
+import { Route as CentrosCustoRouteImport } from './routes/centros-custo'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 
+const UsuariosRoute = UsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TecnicosRoute = TecnicosRouteImport.update({
+  id: '/tecnicos',
+  path: '/tecnicos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicosCadastroRoute = ServicosCadastroRouteImport.update({
+  id: '/servicos-cadastro',
+  path: '/servicos-cadastro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicosRoute = ServicosRouteImport.update({
+  id: '/servicos',
+  path: '/servicos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RentabilidadeRoute = RentabilidadeRouteImport.update({
+  id: '/rentabilidade',
+  path: '/rentabilidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RelatoriosOperacionaisRoute = RelatoriosOperacionaisRouteImport.update({
+  id: '/relatorios-operacionais',
+  path: '/relatorios-operacionais',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RelatoriosCentrosCustoRoute = RelatoriosCentrosCustoRouteImport.update({
+  id: '/relatorios-centros-custo',
+  path: '/relatorios-centros-custo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RelatoriosRoute = RelatoriosRouteImport.update({
   id: '/relatorios',
   path: '/relatorios',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProdutividadeRoute = ProdutividadeRouteImport.update({
+  id: '/produtividade',
+  path: '/produtividade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PontoEquilibrioRoute = PontoEquilibrioRouteImport.update({
+  id: '/ponto-equilibrio',
+  path: '/ponto-equilibrio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PermissoesRoute = PermissoesRouteImport.update({
+  id: '/permissoes',
+  path: '/permissoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MetasRoute = MetasRouteImport.update({
+  id: '/metas',
+  path: '/metas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LancamentosRoute = LancamentosRouteImport.update({
   id: '/lancamentos',
   path: '/lancamentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FluxoCaixaRoute = FluxoCaixaRouteImport.update({
+  id: '/fluxo-caixa',
+  path: '/fluxo-caixa',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DreRoute = DreRouteImport.update({
@@ -41,6 +122,21 @@ const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
   path: '/configuracoes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ColaboradoresRoute = ColaboradoresRouteImport.update({
+  id: '/colaboradores',
+  path: '/colaboradores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CentrosCustoRoute = CentrosCustoRouteImport.update({
+  id: '/centros-custo',
+  path: '/centros-custo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -49,67 +145,228 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/centros-custo': typeof CentrosCustoRoute
+  '/colaboradores': typeof ColaboradoresRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/dashboard-proprietario': typeof DashboardProprietarioRoute
   '/dre': typeof DreRoute
+  '/fluxo-caixa': typeof FluxoCaixaRoute
   '/lancamentos': typeof LancamentosRoute
+  '/login': typeof LoginRoute
+  '/metas': typeof MetasRoute
+  '/permissoes': typeof PermissoesRoute
+  '/ponto-equilibrio': typeof PontoEquilibrioRoute
+  '/produtividade': typeof ProdutividadeRoute
   '/relatorios': typeof RelatoriosRoute
+  '/relatorios-centros-custo': typeof RelatoriosCentrosCustoRoute
+  '/relatorios-operacionais': typeof RelatoriosOperacionaisRoute
+  '/rentabilidade': typeof RentabilidadeRoute
+  '/servicos': typeof ServicosRoute
+  '/servicos-cadastro': typeof ServicosCadastroRoute
+  '/tecnicos': typeof TecnicosRoute
+  '/usuarios': typeof UsuariosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/centros-custo': typeof CentrosCustoRoute
+  '/colaboradores': typeof ColaboradoresRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/dashboard-proprietario': typeof DashboardProprietarioRoute
   '/dre': typeof DreRoute
+  '/fluxo-caixa': typeof FluxoCaixaRoute
   '/lancamentos': typeof LancamentosRoute
+  '/login': typeof LoginRoute
+  '/metas': typeof MetasRoute
+  '/permissoes': typeof PermissoesRoute
+  '/ponto-equilibrio': typeof PontoEquilibrioRoute
+  '/produtividade': typeof ProdutividadeRoute
   '/relatorios': typeof RelatoriosRoute
+  '/relatorios-centros-custo': typeof RelatoriosCentrosCustoRoute
+  '/relatorios-operacionais': typeof RelatoriosOperacionaisRoute
+  '/rentabilidade': typeof RentabilidadeRoute
+  '/servicos': typeof ServicosRoute
+  '/servicos-cadastro': typeof ServicosCadastroRoute
+  '/tecnicos': typeof TecnicosRoute
+  '/usuarios': typeof UsuariosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/centros-custo': typeof CentrosCustoRoute
+  '/colaboradores': typeof ColaboradoresRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/dashboard-proprietario': typeof DashboardProprietarioRoute
   '/dre': typeof DreRoute
+  '/fluxo-caixa': typeof FluxoCaixaRoute
   '/lancamentos': typeof LancamentosRoute
+  '/login': typeof LoginRoute
+  '/metas': typeof MetasRoute
+  '/permissoes': typeof PermissoesRoute
+  '/ponto-equilibrio': typeof PontoEquilibrioRoute
+  '/produtividade': typeof ProdutividadeRoute
   '/relatorios': typeof RelatoriosRoute
+  '/relatorios-centros-custo': typeof RelatoriosCentrosCustoRoute
+  '/relatorios-operacionais': typeof RelatoriosOperacionaisRoute
+  '/rentabilidade': typeof RentabilidadeRoute
+  '/servicos': typeof ServicosRoute
+  '/servicos-cadastro': typeof ServicosCadastroRoute
+  '/tecnicos': typeof TecnicosRoute
+  '/usuarios': typeof UsuariosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
+    | '/centros-custo'
+    | '/colaboradores'
     | '/configuracoes'
     | '/dashboard-proprietario'
     | '/dre'
+    | '/fluxo-caixa'
     | '/lancamentos'
+    | '/login'
+    | '/metas'
+    | '/permissoes'
+    | '/ponto-equilibrio'
+    | '/produtividade'
     | '/relatorios'
+    | '/relatorios-centros-custo'
+    | '/relatorios-operacionais'
+    | '/rentabilidade'
+    | '/servicos'
+    | '/servicos-cadastro'
+    | '/tecnicos'
+    | '/usuarios'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
+    | '/centros-custo'
+    | '/colaboradores'
     | '/configuracoes'
     | '/dashboard-proprietario'
     | '/dre'
+    | '/fluxo-caixa'
     | '/lancamentos'
+    | '/login'
+    | '/metas'
+    | '/permissoes'
+    | '/ponto-equilibrio'
+    | '/produtividade'
     | '/relatorios'
+    | '/relatorios-centros-custo'
+    | '/relatorios-operacionais'
+    | '/rentabilidade'
+    | '/servicos'
+    | '/servicos-cadastro'
+    | '/tecnicos'
+    | '/usuarios'
   id:
     | '__root__'
     | '/'
+    | '/admin'
+    | '/centros-custo'
+    | '/colaboradores'
     | '/configuracoes'
     | '/dashboard-proprietario'
     | '/dre'
+    | '/fluxo-caixa'
     | '/lancamentos'
+    | '/login'
+    | '/metas'
+    | '/permissoes'
+    | '/ponto-equilibrio'
+    | '/produtividade'
     | '/relatorios'
+    | '/relatorios-centros-custo'
+    | '/relatorios-operacionais'
+    | '/rentabilidade'
+    | '/servicos'
+    | '/servicos-cadastro'
+    | '/tecnicos'
+    | '/usuarios'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  CentrosCustoRoute: typeof CentrosCustoRoute
+  ColaboradoresRoute: typeof ColaboradoresRoute
   ConfiguracoesRoute: typeof ConfiguracoesRoute
   DashboardProprietarioRoute: typeof DashboardProprietarioRoute
   DreRoute: typeof DreRoute
+  FluxoCaixaRoute: typeof FluxoCaixaRoute
   LancamentosRoute: typeof LancamentosRoute
+  LoginRoute: typeof LoginRoute
+  MetasRoute: typeof MetasRoute
+  PermissoesRoute: typeof PermissoesRoute
+  PontoEquilibrioRoute: typeof PontoEquilibrioRoute
+  ProdutividadeRoute: typeof ProdutividadeRoute
   RelatoriosRoute: typeof RelatoriosRoute
+  RelatoriosCentrosCustoRoute: typeof RelatoriosCentrosCustoRoute
+  RelatoriosOperacionaisRoute: typeof RelatoriosOperacionaisRoute
+  RentabilidadeRoute: typeof RentabilidadeRoute
+  ServicosRoute: typeof ServicosRoute
+  ServicosCadastroRoute: typeof ServicosCadastroRoute
+  TecnicosRoute: typeof TecnicosRoute
+  UsuariosRoute: typeof UsuariosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/usuarios': {
+      id: '/usuarios'
+      path: '/usuarios'
+      fullPath: '/usuarios'
+      preLoaderRoute: typeof UsuariosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tecnicos': {
+      id: '/tecnicos'
+      path: '/tecnicos'
+      fullPath: '/tecnicos'
+      preLoaderRoute: typeof TecnicosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/servicos-cadastro': {
+      id: '/servicos-cadastro'
+      path: '/servicos-cadastro'
+      fullPath: '/servicos-cadastro'
+      preLoaderRoute: typeof ServicosCadastroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/servicos': {
+      id: '/servicos'
+      path: '/servicos'
+      fullPath: '/servicos'
+      preLoaderRoute: typeof ServicosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rentabilidade': {
+      id: '/rentabilidade'
+      path: '/rentabilidade'
+      fullPath: '/rentabilidade'
+      preLoaderRoute: typeof RentabilidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/relatorios-operacionais': {
+      id: '/relatorios-operacionais'
+      path: '/relatorios-operacionais'
+      fullPath: '/relatorios-operacionais'
+      preLoaderRoute: typeof RelatoriosOperacionaisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/relatorios-centros-custo': {
+      id: '/relatorios-centros-custo'
+      path: '/relatorios-centros-custo'
+      fullPath: '/relatorios-centros-custo'
+      preLoaderRoute: typeof RelatoriosCentrosCustoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/relatorios': {
       id: '/relatorios'
       path: '/relatorios'
@@ -117,11 +374,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RelatoriosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/produtividade': {
+      id: '/produtividade'
+      path: '/produtividade'
+      fullPath: '/produtividade'
+      preLoaderRoute: typeof ProdutividadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ponto-equilibrio': {
+      id: '/ponto-equilibrio'
+      path: '/ponto-equilibrio'
+      fullPath: '/ponto-equilibrio'
+      preLoaderRoute: typeof PontoEquilibrioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/permissoes': {
+      id: '/permissoes'
+      path: '/permissoes'
+      fullPath: '/permissoes'
+      preLoaderRoute: typeof PermissoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/metas': {
+      id: '/metas'
+      path: '/metas'
+      fullPath: '/metas'
+      preLoaderRoute: typeof MetasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lancamentos': {
       id: '/lancamentos'
       path: '/lancamentos'
       fullPath: '/lancamentos'
       preLoaderRoute: typeof LancamentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fluxo-caixa': {
+      id: '/fluxo-caixa'
+      path: '/fluxo-caixa'
+      fullPath: '/fluxo-caixa'
+      preLoaderRoute: typeof FluxoCaixaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dre': {
@@ -145,6 +444,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfiguracoesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/colaboradores': {
+      id: '/colaboradores'
+      path: '/colaboradores'
+      fullPath: '/colaboradores'
+      preLoaderRoute: typeof ColaboradoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/centros-custo': {
+      id: '/centros-custo'
+      path: '/centros-custo'
+      fullPath: '/centros-custo'
+      preLoaderRoute: typeof CentrosCustoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -157,11 +477,27 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  CentrosCustoRoute: CentrosCustoRoute,
+  ColaboradoresRoute: ColaboradoresRoute,
   ConfiguracoesRoute: ConfiguracoesRoute,
   DashboardProprietarioRoute: DashboardProprietarioRoute,
   DreRoute: DreRoute,
+  FluxoCaixaRoute: FluxoCaixaRoute,
   LancamentosRoute: LancamentosRoute,
+  LoginRoute: LoginRoute,
+  MetasRoute: MetasRoute,
+  PermissoesRoute: PermissoesRoute,
+  PontoEquilibrioRoute: PontoEquilibrioRoute,
+  ProdutividadeRoute: ProdutividadeRoute,
   RelatoriosRoute: RelatoriosRoute,
+  RelatoriosCentrosCustoRoute: RelatoriosCentrosCustoRoute,
+  RelatoriosOperacionaisRoute: RelatoriosOperacionaisRoute,
+  RentabilidadeRoute: RentabilidadeRoute,
+  ServicosRoute: ServicosRoute,
+  ServicosCadastroRoute: ServicosCadastroRoute,
+  TecnicosRoute: TecnicosRoute,
+  UsuariosRoute: UsuariosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

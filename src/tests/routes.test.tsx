@@ -6,13 +6,12 @@ describe("Route Tree", () => {
     expect(routeTree).toBeDefined();
   });
 
-  it("possui 6 rotas filhas registradas", () => {
+  it("possui 22 rotas filhas (sem 404s - verificado em AllPages)", () => {
     const children = (routeTree as any).children;
     expect(children).toBeDefined();
-    expect(Array.isArray(children) || typeof children === "object").toBe(true);
-  });
-
-  it("possui a rota raiz com método _addFileChildren", () => {
-    expect(typeof (routeTree as any)._addFileChildren).toBe("function");
+    const count = typeof children === "object" && !Array.isArray(children)
+      ? Object.keys(children).length
+      : (children.length || children.size || 0);
+    expect(count).toBe(22);
   });
 });

@@ -49,12 +49,6 @@ export const Route = createFileRoute("/dashboard-proprietario")({
 
 const META_MENSAL = 85000;
 
-function formatShortBRL(n: number) {
-  if (n >= 1_000_000) return `R$ ${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `R$ ${(n / 1_000).toFixed(n >= 10_000 ? 0 : 1)}K`;
-  return fmtBRL(n);
-}
-
 function IndicadorCard({
   label,
   value,
@@ -294,14 +288,14 @@ function DashboardProprietario() {
       <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
         <IndicadorCard
           label="Receita do Mês"
-          value={formatShortBRL(dre.receitaBruta)}
+          value={fmtBRL(dre.receitaBruta)}
           icon={<TrendingUp className="h-5 w-5" />}
           color="#215797"
           subtitle="Faturamento bruto"
         />
         <IndicadorCard
           label="Lucro Líquido"
-          value={formatShortBRL(dre.lucroLiquido)}
+          value={fmtBRL(dre.lucroLiquido)}
           icon={<DollarSign className="h-5 w-5" />}
           color="#10B981"
           subtitle={`Margem ${fmtPct(dre.margemLiquida)}`}
@@ -318,11 +312,11 @@ function DashboardProprietario() {
           value={fmtPct(metaAtingida)}
           icon={<Award className="h-5 w-5" />}
           color="#F59E0B"
-          subtitle={`Meta: ${formatShortBRL(META_MENSAL)}`}
+          subtitle={`Meta: ${fmtBRL(META_MENSAL)}`}
         />
         <IndicadorCard
           label="Ponto de Equilíbrio"
-          value={formatShortBRL(pontoEquilibrio)}
+          value={fmtBRL(pontoEquilibrio)}
           icon={<PiggyBank className="h-5 w-5" />}
           color={dre.receitaBruta >= pontoEquilibrio ? "#10B981" : "#EF4444"}
           subtitle={dre.receitaBruta >= pontoEquilibrio ? "Equilíbrio superado" : "Abaixo do equilíbrio"}
@@ -340,7 +334,7 @@ function DashboardProprietario() {
         />
         <IndicadorCard
           label="Caixa Projetado"
-          value={formatShortBRL(saldoProjetado)}
+          value={fmtBRL(saldoProjetado)}
           icon={<BarChart3 className="h-5 w-5" />}
           color={saldoProjetado >= 0 ? "#215797" : "#EF4444"}
           subtitle="Projeção anual"

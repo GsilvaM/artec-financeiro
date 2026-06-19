@@ -12,6 +12,13 @@ vi.mock("@tanstack/react-router", () => ({
   },
 }));
 
+vi.mock("@/lib/auth/auth", () => ({
+  useAuth: () => ({
+    user: { username: "admin", name: "Fred", role: "admin" },
+    logout: vi.fn(),
+  }),
+}));
+
 describe("HeaderNav", () => {
   it("renderiza o logo da Artec", () => {
     render(<HeaderNav />);
