@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -82,7 +82,7 @@ function LancamentosPage() {
   const [form, setForm] = useState<Lancamento>(emptyForm());
   const editando = !!form.id;
 
-  const categoriasPorTipo = (tipo: TipoLancamento): string[] => {
+  const categoriasPorTipo = useCallback((tipo: TipoLancamento): string[] => {
     switch (tipo) {
       case "receita":
         return categorias.receitas;
@@ -95,7 +95,7 @@ function LancamentosPage() {
       case "despesa_financeira":
         return categorias.despesas_financeiras;
     }
-  };
+  }, [categorias]);
 
   const filtrados = useMemo(() => {
     const base = filtrarPorPeriodo(lancs, ano, mes);
@@ -125,26 +125,27 @@ function LancamentosPage() {
     toast.success("Lançamento excluído");
   };
   const salvar = () => {
-    if (!form.categoria) {
+    const current = form;
+    if (!current.categoria) {
       toast.error("Selecione uma categoria");
       return;
     }
-    if (!form.descricao.trim()) {
+    if (!current.descricao.trim()) {
       toast.error("Informe a descrição");
       return;
     }
-    if (form.valor <= 0) {
+    if (current.valor <= 0) {
       toast.error("Informe um valor válido");
       return;
     }
-    if (editando) {
-      setLancs(lancs.map((l) => (l.id === form.id ? form : l)));
+    if (current.id) {
+      setLancs(lancs.map((l) => (l.id === current.id ? current : l)));
       toast.success("Lançamento atualizado");
     } else {
       setLancs([
         ...lancs,
         {
-          ...form,
+          ...current,
           id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
         },
       ]);
@@ -170,7 +171,7 @@ function LancamentosPage() {
                 <Plus className="mr-1.5 h-4 w-4" /> Novo
               </Button>
             </DialogTrigger>
-            <DialogContent key={form.id || "novo"} className="max-w-lg w-[95vw] sm:w-full">
+            <DialogContent key={open ? form.id || "novo" : "closed"} className="max-w-lg w-[95vw] sm:w-full">
               <DialogHeader>
                 <DialogTitle className="text-primary">
                   {editando ? "Editar lançamento" : "Novo lançamento"}
@@ -182,7 +183,7 @@ function LancamentosPage() {
                   <Input
                     type="date"
                     value={form.data}
-                    onChange={(e) => setForm({ ...form, data: e.target.value })}
+                    onChange={(e) => setForm(prev => ({ ...prev, data: e.target.value }))}
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -192,7 +193,7 @@ function LancamentosPage() {
                     step="0.01"
                     min="0"
                     value={form.valor || ""}
-                    onChange={(e) => setForm({ ...form, valor: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => setForm(prev => ({ ...prev, valor: parseFloat(e.target.value) || 0 }))}
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -200,11 +201,11 @@ function LancamentosPage() {
                   <Select
                     value={form.tipo}
                     onValueChange={(v) =>
-                      setForm({
-                        ...form,
+                      setForm(prev => ({
+                        ...prev,
                         tipo: v as TipoLancamento,
                         categoria: "",
-                      })
+                      }))
                     }
                   >
                     <SelectTrigger>
@@ -223,7 +224,7 @@ function LancamentosPage() {
                   <Label className="text-xs font-medium text-muted-foreground">Status</Label>
                   <Select
                     value={form.status}
-                    onValueChange={(v) => setForm({ ...form, status: v as StatusLancamento })}
+                    onValueChange={(v) => setForm(prev => ({ ...prev, status: v as StatusLancamento }))}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -240,8 +241,9 @@ function LancamentosPage() {
                 <div className="space-y-1.5 sm:col-span-2">
                   <Label className="text-xs font-medium text-muted-foreground">Categoria</Label>
                   <Select
+                    key={`cat-${form.tipo}-${form.id || "novo"}`}
                     value={form.categoria}
-                    onValueChange={(v) => setForm({ ...form, categoria: v })}
+                    onValueChange={(v) => setForm(prev => ({ ...prev, categoria: v }))}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione" />
@@ -259,7 +261,7 @@ function LancamentosPage() {
                   <Label className="text-xs font-medium text-muted-foreground">Descrição</Label>
                   <Input
                     value={form.descricao}
-                    onChange={(e) => setForm({ ...form, descricao: e.target.value })}
+                    onChange={(e) => setForm(prev => ({ ...prev, descricao: e.target.value }))}
                   />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2">
@@ -268,7 +270,7 @@ function LancamentosPage() {
                   </Label>
                   <Input
                     value={form.contraparte}
-                    onChange={(e) => setForm({ ...form, contraparte: e.target.value })}
+                    onChange={(e) => setForm(prev => ({ ...prev, contraparte: e.target.value }))}
                   />
                 </div>
               </div>
