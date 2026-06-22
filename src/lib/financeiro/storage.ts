@@ -26,7 +26,7 @@ export function useLancamentos(): [Lancamento[], (l: Lancamento[]) => void] {
 
   const { mutate } = useMutation({
     mutationFn: async (novos: Lancamento[]) => {
-      await saveLancamentosApi({ data: novos });
+      await saveLancamentosApi(novos);
     },
     onMutate: (novos) => {
       queryClient.setQueryData(LANC_KEY, novos);
@@ -66,7 +66,7 @@ export function useCategorias(): [Categorias, (c: Categorias) => void] {
 
   const { mutate } = useMutation({
     mutationFn: async (novas: Categorias) => {
-      await saveCategoriasApi({ data: novas });
+      await saveCategoriasApi(novas);
     },
     onMutate: (novas) => {
       queryClient.setQueryData(CAT_KEY, novas);
@@ -116,10 +116,10 @@ export async function importarBackup(file: File) {
   const data = JSON.parse(text);
 
   if (data.categorias && typeof data.categorias === "object") {
-    await saveCategoriasApi({ data: data.categorias });
+    await saveCategoriasApi(data.categorias);
   }
   if (Array.isArray(data.lancamentos)) {
-    await saveLancamentosApi({ data: data.lancamentos });
+    await saveLancamentosApi(data.lancamentos);
   }
 }
 

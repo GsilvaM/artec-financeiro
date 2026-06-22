@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Lancamento {
+  id          String    @id
+  criadoEm    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  data        DateTime  @db.Date
+  tipo        String
+  categoria   String
+  descricao   String
+  contraparte String    @default("")
+  valor       Decimal   @default(0) @db.Decimal(12, 2)
+  status      String    @default("pendente")
+
+  @@index([categoria], map: "idx_lancamentos_categoria")
+  @@index([data], map: "idx_lancamentos_data")
+  @@index([status], map: "idx_lancamentos_status")
+  @@index([tipo], map: "idx_lancamentos_tipo")
+  @@index([tipo, data], map: "idx_lancamentos_tipo_data")
+  @@map("lancamentos")
+}
+
+model Categoria {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  criadoEm  DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  tipo      String
+  nome      String
+
+  @@unique([tipo, nome])
+  @@index([tipo], map: "idx_categorias_tipo")
+  @@map("categorias")
+}
+
+model Tecnico {
+  id            String    @id
+  criadoEm      DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  nome          String
+  especialidade String    @default("")
+  telefone      String    @default("")
+  email         String    @default("")
+  ativo         Boolean   @default(true)
+
+  @@index([ativo], map: "idx_tecnicos_ativo")
+  @@index([nome], map: "idx_tecnicos_nome")
+  @@map("tecnicos")
+}
+
+model Servico {
+  id        String    @id
+  criadoEm  DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  cliente   String
+  tecnico   String    @default("")
+  descricao String    @default("")
+  data      DateTime  @db.Date
+  valor     Decimal   @default(0) @db.Decimal(12, 2)
+  status    String    @default("agendado")
+
+  @@index([cliente], map: "idx_servicos_cliente")
+  @@index([data], map: "idx_servicos_data")
+  @@index([status], map: "idx_servicos_status")
+  @@map("servicos")
+}
+
+model Colaborador {
+  id           String    @id
+  criadoEm     DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  nome         String
+  cargo        String    @default("")
+  departamento String    @default("")
+  telefone     String    @default("")
+  email        String    @default("")
+  ativo        Boolean   @default(true)
+
+  @@index([ativo], map: "idx_colaboradores_ativo")
+  @@index([departamento], map: "idx_colaboradores_departamento")
+  @@index([nome], map: "idx_colaboradores_nome")
+  @@map("colaboradores")
+}
+
+model ServicoCadastro {
+  id        String    @id
+  criadoEm  DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  nome      String
+  descricao String    @default("")
+  valor     Decimal   @default(0) @db.Decimal(12, 2)
+  categoria String    @default("")
+  ativo     Boolean   @default(true)
+
+  @@index([categoria], map: "idx_servicos_cadastro_categoria")
+  @@index([nome], map: "idx_servicos_cadastro_nome")
+  @@map("servicos_cadastro")
+}
+
+model Meta {
+  id         String    @id
+  criadoEm   DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  descricao  String
+  valorMeta  Decimal   @default(0) @map("valor_meta") @db.Decimal(12, 2)
+  valorAtual Decimal   @default(0) @map("valor_atual") @db.Decimal(12, 2)
+  periodo    String    @default("")
+  tipo       String    @default("mensal")
+
+  @@index([periodo], map: "idx_metas_periodo")
+  @@index([tipo], map: "idx_metas_tipo")
+  @@map("metas")
+}
+
+model Usuario {
+  id       String    @id
+  criadoEm DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  nome     String
+  username String    @unique(map: "idx_usuarios_username")
+  role     String    @default("user")
+  ativo    Boolean   @default(true)
+
+  @@index([role], map: "idx_usuarios_role")
+  @@map("usuarios")
+}
+
+model Permissao {
+  id       String    @id
+  criadoEm DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  role     String    @default("user")
+  recurso  String
+  leitura  Boolean   @default(true)
+  escrita  Boolean   @default(false)
+
+  @@unique([role, recurso])
+  @@index([recurso], map: "idx_permissoes_recurso")
+  @@index([role], map: "idx_permissoes_role")
+  @@map("permissoes")
+}

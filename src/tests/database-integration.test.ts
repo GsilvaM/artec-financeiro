@@ -1,72 +1,24 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { readFileSync, existsSync } from "node:fs";
-import { resolve } from "node:path";
-
-function getEnv(name: string): string {
-  const val = process.env[name];
-  if (val) return val;
-  try {
-    const envPath = resolve(process.cwd(), ".env");
-    if (existsSync(envPath)) {
-      const content = readFileSync(envPath, "utf-8");
-      for (const line of content.split("\n")) {
-        const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith("#")) continue;
-        const eqIdx = trimmed.indexOf("=");
-        if (eqIdx === -1) continue;
-        const key = trimmed.slice(0, eqIdx).trim();
-        const value = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, "");
-        if (key === name) return value;
-      }
-    }
-  } catch { }
-  return "";
-}
-
-const supabaseUrl = getEnv("SUPABASE_URL") || getEnv("VITE_SUPABASE_URL");
-const serviceKey = getEnv("SUPABASE_SERVICE_KEY");
-const anonKey = getEnv("VITE_SUPABASE_ANON_KEY");
+import { describe, it, expect, beforeAll } from "vitest";
+import { getPrisma } from "@/services/prisma";
+import type { PrismaClient } from "@prisma/client";
 
 const TEST_ID = `test-${Date.now()}`;
 
-interface TableInfo {
-  name: string;
-  exists: boolean;
-  columns: { name: string; type: string }[];
-  rowCount: number;
-}
-
-describe("Integração com Supabase", () => {
-  let db: SupabaseClient;
+describe("Integração com Prisma (Supabase PostgreSQL)", () => {
+  let prisma: PrismaClient;
 
   beforeAll(() => {
-    expect(supabaseUrl, "SUPABASE_URL deve estar configurado").toBeTruthy();
-    expect(serviceKey, "SUPABASE_SERVICE_KEY deve estar configurado").toBeTruthy();
-    db = createClient(supabaseUrl!, serviceKey!);
+    prisma = getPrisma();
   });
 
   // ─── Conexão ──────────────────────────────────────────────
 
-  it("1. Conecta ao Supabase com service key", async () => {
-    const { error } = await db.from("_migrations").select("*").limit(1);
-    if (error && error.code === "PGRST205") {
-      // Table _migrations might not exist if bootstrapping not done
-      expect(error.code).toBe("PGRST205");
-    } else {
-      expect(error).toBeNull();
-    }
+  it("1. Conecta ao banco e executa query simples", async () => {
+    const result = await prisma.$queryRawUnsafe<{ one: number }[]>("SELECT 1 as one");
+    expect(Number(result[0]?.one)).toBe(1);
   });
 
-  it("2. Conecta ao Supabase com anon key (cliente)", async () => {
-    expect(anonKey, "VITE_SUPABASE_ANON_KEY deve estar configurado").toBeTruthy();
-    const clientDb = createClient(supabaseUrl!, anonKey!);
-    const { error } = await clientDb.from("lancamentos").select("count", { count: "exact", head: true });
-    // Anon key pode ter RLS, então pode dar erro - o importante é não dar network error
-    expect(error === null || error?.message?.includes("permission") || error?.message?.includes("does not exist")).toBe(true);
-  });
-
-  // ─── Verificar tabelas existentes ─────────────────────────
+  // ─── Verificar tabelas ─────────────────────────────────────
 
   const TABELAS = [
     "lancamentos",
@@ -78,30 +30,27 @@ describe("Integração com Supabase", () => {
     "metas",
     "usuarios",
     "permissoes",
-  ];
+  ] as const;
 
-  const tabelasInfo: Record<string, TableInfo> = {};
+  const tabelasInfo: Record<string, boolean> = {};
 
-  it("3. Verifica quais tabelas existem no banco", async () => {
+  it("2. Verifica quais tabelas existem no banco", async () => {
     for (const table of TABELAS) {
-      const { error } = await db.from(table).select("*").limit(1);
-      const exists = !error || !error.message?.includes("Could not find the table");
-      tabelasInfo[table] = {
-        name: table,
-        exists,
-        columns: [],
-        rowCount: 0,
-      };
+      try {
+        await prisma.$queryRawUnsafe(`SELECT 1 FROM "${table}" LIMIT 1`);
+        tabelasInfo[table] = true;
+      } catch {
+        tabelasInfo[table] = false;
+      }
     }
 
-    const existentes = Object.values(tabelasInfo).filter(t => t.exists).map(t => t.name);
-    const faltantes = Object.values(tabelasInfo).filter(t => !t.exists).map(t => t.name);
+    const existentes = Object.entries(tabelasInfo).filter(([, v]) => v).map(([k]) => k);
+    const faltantes = Object.entries(tabelasInfo).filter(([, v]) => !v).map(([k]) => k);
     console.log(`✅ Tabelas existentes: ${existentes.join(", ") || "(nenhuma)"}`);
     if (faltantes.length > 0) {
       console.log(`❌ Tabelas faltantes: ${faltantes.join(", ")}`);
-      console.log(`⚠️  Execute sql/002_create_new_tables.sql no SQL Editor do Supabase para criar as tabelas faltantes`);
     }
-    expect(existentes.length > 0).toBe(true);
+    expect(existentes.length).toBeGreaterThan(0);
   });
 
   // ─── CRUD: Lancamentos ────────────────────────────────────
@@ -109,7 +58,7 @@ describe("Integração com Supabase", () => {
   describe("CRUD Lancamentos", () => {
     const testLancamento = {
       id: `${TEST_ID}-lanc`,
-      data: "2026-06-19",
+      data: new Date("2026-06-19"),
       tipo: "receita",
       categoria: "Vendas",
       descricao: "Teste CRUD - remover",
@@ -119,40 +68,38 @@ describe("Integração com Supabase", () => {
     };
 
     it("CREATE - insere lançamento", async () => {
-      if (!tabelasInfo.lancamentos?.exists) return;
-      const { error } = await db.from("lancamentos").insert(testLancamento);
-      expect(error).toBeNull();
+      if (!tabelasInfo.lancamentos) return;
+      await prisma.lancamento.create({ data: testLancamento });
+      expect(true).toBe(true);
     });
 
     it("READ - lista lançamentos", async () => {
-      if (!tabelasInfo.lancamentos?.exists) return;
-      const { data, error } = await db.from("lancamentos").select("*").limit(1);
-      expect(error).toBeNull();
-      expect(data).toBeDefined();
-      expect(Array.isArray(data)).toBe(true);
+      if (!tabelasInfo.lancamentos) return;
+      const data = await prisma.lancamento.findMany({ take: 1 });
+      expect(data.length).toBeGreaterThan(0);
     });
 
     it("READ - busca lançamento por id", async () => {
-      if (!tabelasInfo.lancamentos?.exists) return;
-      const { data, error } = await db.from("lancamentos").select("*").eq("id", testLancamento.id).single();
-      expect(error).toBeNull();
-      expect(data).toBeDefined();
+      if (!tabelasInfo.lancamentos) return;
+      const data = await prisma.lancamento.findUnique({ where: { id: testLancamento.id } });
+      expect(data).not.toBeNull();
       expect(data!.descricao).toBe(testLancamento.descricao);
     });
 
     it("UPDATE - atualiza lançamento", async () => {
-      if (!tabelasInfo.lancamentos?.exists) return;
-      const { error } = await db.from("lancamentos").update({ valor: 2000.00 }).eq("id", testLancamento.id);
-      expect(error).toBeNull();
-      const { data } = await db.from("lancamentos").select("valor").eq("id", testLancamento.id).single();
-      expect(data!.valor).toBe(2000.00);
+      if (!tabelasInfo.lancamentos) return;
+      await prisma.lancamento.update({
+        where: { id: testLancamento.id },
+        data: { valor: 2000.00 },
+      });
+      const updated = await prisma.lancamento.findUnique({ where: { id: testLancamento.id } });
+      expect(Number(updated!.valor)).toBe(2000);
     });
 
     it("DELETE - remove lançamento", async () => {
-      if (!tabelasInfo.lancamentos?.exists) return;
-      const { error } = await db.from("lancamentos").delete().eq("id", testLancamento.id);
-      expect(error).toBeNull();
-      const { data } = await db.from("lancamentos").select("*").eq("id", testLancamento.id);
+      if (!tabelasInfo.lancamentos) return;
+      await prisma.lancamento.delete({ where: { id: testLancamento.id } });
+      const data = await prisma.lancamento.findMany({ where: { id: testLancamento.id } });
       expect(data).toHaveLength(0);
     });
   });
@@ -166,25 +113,25 @@ describe("Integração com Supabase", () => {
     };
 
     it("CREATE - insere categoria", async () => {
-      if (!tabelasInfo.categorias?.exists) return;
-      const { error } = await db.from("categorias").insert(testCategoria);
-      expect(error).toBeNull();
+      if (!tabelasInfo.categorias) return;
+      await prisma.categoria.create({ data: testCategoria });
+      expect(true).toBe(true);
     });
 
     it("READ - lista categorias", async () => {
-      if (!tabelasInfo.categorias?.exists) return;
-      const { data, error } = await db.from("categorias").select("*").limit(1);
-      expect(error).toBeNull();
-      expect(data!.length).toBeGreaterThan(0);
+      if (!tabelasInfo.categorias) return;
+      const data = await prisma.categoria.findMany({ take: 1 });
+      expect(data.length).toBeGreaterThan(0);
     });
 
     it("DELETE - remove categoria", async () => {
-      if (!tabelasInfo.categorias?.exists) return;
-      const { data: found } = await db.from("categorias").select("id").eq("nome", testCategoria.nome);
-      if (found && found.length > 0) {
-        const { error } = await db.from("categorias").delete().eq("id", found[0].id);
-        expect(error).toBeNull();
+      if (!tabelasInfo.categorias) return;
+      const found = await prisma.categoria.findFirst({ where: { nome: testCategoria.nome } });
+      if (found) {
+        await prisma.categoria.delete({ where: { id: found.id } });
       }
+      const data = await prisma.categoria.findMany({ where: { nome: testCategoria.nome } });
+      expect(data).toHaveLength(0);
     });
   });
 
@@ -201,37 +148,36 @@ describe("Integração com Supabase", () => {
     };
 
     it("CREATE - insere técnico", async () => {
-      if (!tabelasInfo.tecnicos?.exists) return;
-      const { error } = await db.from("tecnicos").insert(testTecnico);
-      expect(error).toBeNull();
+      if (!tabelasInfo.tecnicos) return;
+      await prisma.tecnico.create({ data: testTecnico });
     });
 
     it("READ - lista técnicos", async () => {
-      if (!tabelasInfo.tecnicos?.exists) return;
-      const { data, error } = await db.from("tecnicos").select("*").limit(1);
-      expect(error).toBeNull();
-      expect(data).toBeDefined();
+      if (!tabelasInfo.tecnicos) return;
+      const data = await prisma.tecnico.findMany({ take: 1 });
+      expect(data.length).toBeGreaterThan(0);
     });
 
     it("READ - busca por id", async () => {
-      if (!tabelasInfo.tecnicos?.exists) return;
-      const { data, error } = await db.from("tecnicos").select("*").eq("id", testTecnico.id).single();
-      expect(error).toBeNull();
+      if (!tabelasInfo.tecnicos) return;
+      const data = await prisma.tecnico.findUnique({ where: { id: testTecnico.id } });
+      expect(data).not.toBeNull();
       expect(data!.nome).toBe(testTecnico.nome);
     });
 
     it("UPDATE - atualiza técnico", async () => {
-      if (!tabelasInfo.tecnicos?.exists) return;
-      const { error } = await db.from("tecnicos").update({ telefone: "(21) 88888-8888" }).eq("id", testTecnico.id);
-      expect(error).toBeNull();
-      const { data } = await db.from("tecnicos").select("telefone").eq("id", testTecnico.id).single();
-      expect(data!.telefone).toBe("(21) 88888-8888");
+      if (!tabelasInfo.tecnicos) return;
+      await prisma.tecnico.update({
+        where: { id: testTecnico.id },
+        data: { telefone: "(21) 88888-8888" },
+      });
+      const updated = await prisma.tecnico.findUnique({ where: { id: testTecnico.id } });
+      expect(updated!.telefone).toBe("(21) 88888-8888");
     });
 
     it("DELETE - remove técnico", async () => {
-      if (!tabelasInfo.tecnicos?.exists) return;
-      const { error } = await db.from("tecnicos").delete().eq("id", testTecnico.id);
-      expect(error).toBeNull();
+      if (!tabelasInfo.tecnicos) return;
+      await prisma.tecnico.delete({ where: { id: testTecnico.id } });
     });
   });
 
@@ -243,34 +189,33 @@ describe("Integração com Supabase", () => {
       cliente: "Cliente Teste",
       tecnico: "Técnico Teste",
       descricao: "Serviço de teste CRUD",
-      data: "2026-06-19",
+      data: new Date("2026-06-19"),
       valor: 500.00,
       status: "agendado",
     };
 
     it("CREATE - insere serviço", async () => {
-      if (!tabelasInfo.servicos?.exists) return;
-      const { error } = await db.from("servicos").insert(testServico);
-      expect(error).toBeNull();
+      if (!tabelasInfo.servicos) return;
+      await prisma.servico.create({ data: testServico });
     });
 
     it("READ - lista serviços", async () => {
-      if (!tabelasInfo.servicos?.exists) return;
-      const { data, error } = await db.from("servicos").select("*").limit(1);
-      expect(error).toBeNull();
-      expect(data).toBeDefined();
+      if (!tabelasInfo.servicos) return;
+      const data = await prisma.servico.findMany({ take: 1 });
+      expect(data.length).toBeGreaterThan(0);
     });
 
     it("UPDATE - atualiza status", async () => {
-      if (!tabelasInfo.servicos?.exists) return;
-      const { error } = await db.from("servicos").update({ status: "concluido" }).eq("id", testServico.id);
-      expect(error).toBeNull();
+      if (!tabelasInfo.servicos) return;
+      await prisma.servico.update({
+        where: { id: testServico.id },
+        data: { status: "concluido" },
+      });
     });
 
     it("DELETE - remove serviço", async () => {
-      if (!tabelasInfo.servicos?.exists) return;
-      const { error } = await db.from("servicos").delete().eq("id", testServico.id);
-      expect(error).toBeNull();
+      if (!tabelasInfo.servicos) return;
+      await prisma.servico.delete({ where: { id: testServico.id } });
     });
   });
 
@@ -288,28 +233,27 @@ describe("Integração com Supabase", () => {
     };
 
     it("CREATE - insere colaborador", async () => {
-      if (!tabelasInfo.colaboradores?.exists) return;
-      const { error } = await db.from("colaboradores").insert(testColaborador);
-      expect(error).toBeNull();
+      if (!tabelasInfo.colaboradores) return;
+      await prisma.colaborador.create({ data: testColaborador });
     });
 
     it("READ - lista colaboradores", async () => {
-      if (!tabelasInfo.colaboradores?.exists) return;
-      const { data, error } = await db.from("colaboradores").select("*").limit(1);
-      expect(error).toBeNull();
-      expect(data).toBeDefined();
+      if (!tabelasInfo.colaboradores) return;
+      const data = await prisma.colaborador.findMany({ take: 1 });
+      expect(data.length).toBeGreaterThan(0);
     });
 
     it("UPDATE - atualiza cargo", async () => {
-      if (!tabelasInfo.colaboradores?.exists) return;
-      const { error } = await db.from("colaboradores").update({ cargo: "Tech Lead" }).eq("id", testColaborador.id);
-      expect(error).toBeNull();
+      if (!tabelasInfo.colaboradores) return;
+      await prisma.colaborador.update({
+        where: { id: testColaborador.id },
+        data: { cargo: "Tech Lead" },
+      });
     });
 
     it("DELETE - remove colaborador", async () => {
-      if (!tabelasInfo.colaboradores?.exists) return;
-      const { error } = await db.from("colaboradores").delete().eq("id", testColaborador.id);
-      expect(error).toBeNull();
+      if (!tabelasInfo.colaboradores) return;
+      await prisma.colaborador.delete({ where: { id: testColaborador.id } });
     });
   });
 
@@ -326,28 +270,27 @@ describe("Integração com Supabase", () => {
     };
 
     it("CREATE - insere serviço no catálogo", async () => {
-      if (!tabelasInfo.servicos_cadastro?.exists) return;
-      const { error } = await db.from("servicos_cadastro").insert(testServicoCadastro);
-      expect(error).toBeNull();
+      if (!tabelasInfo.servicos_cadastro) return;
+      await prisma.servicoCadastro.create({ data: testServicoCadastro });
     });
 
     it("READ - lista catálogo", async () => {
-      if (!tabelasInfo.servicos_cadastro?.exists) return;
-      const { data, error } = await db.from("servicos_cadastro").select("*").limit(1);
-      expect(error).toBeNull();
-      expect(data).toBeDefined();
+      if (!tabelasInfo.servicos_cadastro) return;
+      const data = await prisma.servicoCadastro.findMany({ take: 1 });
+      expect(data.length).toBeGreaterThan(0);
     });
 
     it("UPDATE - atualiza valor", async () => {
-      if (!tabelasInfo.servicos_cadastro?.exists) return;
-      const { error } = await db.from("servicos_cadastro").update({ valor: 399.90 }).eq("id", testServicoCadastro.id);
-      expect(error).toBeNull();
+      if (!tabelasInfo.servicos_cadastro) return;
+      await prisma.servicoCadastro.update({
+        where: { id: testServicoCadastro.id },
+        data: { valor: 399.90 },
+      });
     });
 
     it("DELETE - remove do catálogo", async () => {
-      if (!tabelasInfo.servicos_cadastro?.exists) return;
-      const { error } = await db.from("servicos_cadastro").delete().eq("id", testServicoCadastro.id);
-      expect(error).toBeNull();
+      if (!tabelasInfo.servicos_cadastro) return;
+      await prisma.servicoCadastro.delete({ where: { id: testServicoCadastro.id } });
     });
   });
 
@@ -361,40 +304,48 @@ describe("Integração com Supabase", () => {
       valor_atual: 25000.00,
       periodo: "2026-06",
       tipo: "mensal",
-    };
+    } as const;
 
     it("CREATE - insere meta", async () => {
-      if (!tabelasInfo.metas?.exists) return;
-      const { error } = await db.from("metas").insert(testMeta);
-      expect(error).toBeNull();
+      if (!tabelasInfo.metas) return;
+      await prisma.meta.create({
+        data: {
+          id: testMeta.id,
+          descricao: testMeta.descricao,
+          valorMeta: testMeta.valor_meta,
+          valorAtual: testMeta.valor_atual,
+          periodo: testMeta.periodo,
+          tipo: testMeta.tipo,
+        },
+      });
     });
 
     it("READ - lista metas", async () => {
-      if (!tabelasInfo.metas?.exists) return;
-      const { data, error } = await db.from("metas").select("*").limit(1);
-      expect(error).toBeNull();
-      expect(data).toBeDefined();
+      if (!tabelasInfo.metas) return;
+      const data = await prisma.meta.findMany({ take: 1 });
+      expect(data.length).toBeGreaterThan(0);
     });
 
     it("READ - busca por id", async () => {
-      if (!tabelasInfo.metas?.exists) return;
-      const { data, error } = await db.from("metas").select("*").eq("id", testMeta.id).single();
-      expect(error).toBeNull();
+      if (!tabelasInfo.metas) return;
+      const data = await prisma.meta.findUnique({ where: { id: testMeta.id } });
+      expect(data).not.toBeNull();
       expect(data!.descricao).toBe(testMeta.descricao);
     });
 
     it("UPDATE - atualiza valor atual", async () => {
-      if (!tabelasInfo.metas?.exists) return;
-      const { error } = await db.from("metas").update({ valor_atual: 30000.00 }).eq("id", testMeta.id);
-      expect(error).toBeNull();
-      const { data } = await db.from("metas").select("valor_atual").eq("id", testMeta.id).single();
-      expect(data!.valor_atual).toBe(30000);
+      if (!tabelasInfo.metas) return;
+      await prisma.meta.update({
+        where: { id: testMeta.id },
+        data: { valorAtual: 30000.00 },
+      });
+      const updated = await prisma.meta.findUnique({ where: { id: testMeta.id } });
+      expect(Number(updated!.valorAtual)).toBe(30000);
     });
 
     it("DELETE - remove meta", async () => {
-      if (!tabelasInfo.metas?.exists) return;
-      const { error } = await db.from("metas").delete().eq("id", testMeta.id);
-      expect(error).toBeNull();
+      if (!tabelasInfo.metas) return;
+      await prisma.meta.delete({ where: { id: testMeta.id } });
     });
   });
 
@@ -410,28 +361,27 @@ describe("Integração com Supabase", () => {
     };
 
     it("CREATE - insere usuário", async () => {
-      if (!tabelasInfo.usuarios?.exists) return;
-      const { error } = await db.from("usuarios").insert(testUsuario);
-      expect(error).toBeNull();
+      if (!tabelasInfo.usuarios) return;
+      await prisma.usuario.create({ data: testUsuario });
     });
 
     it("READ - lista usuários", async () => {
-      if (!tabelasInfo.usuarios?.exists) return;
-      const { data, error } = await db.from("usuarios").select("*").limit(1);
-      expect(error).toBeNull();
-      expect(data).toBeDefined();
+      if (!tabelasInfo.usuarios) return;
+      const data = await prisma.usuario.findMany({ take: 1 });
+      expect(data.length).toBeGreaterThan(0);
     });
 
     it("UPDATE - altera role", async () => {
-      if (!tabelasInfo.usuarios?.exists) return;
-      const { error } = await db.from("usuarios").update({ role: "admin" }).eq("id", testUsuario.id);
-      expect(error).toBeNull();
+      if (!tabelasInfo.usuarios) return;
+      await prisma.usuario.update({
+        where: { id: testUsuario.id },
+        data: { role: "admin" },
+      });
     });
 
     it("DELETE - remove usuário", async () => {
-      if (!tabelasInfo.usuarios?.exists) return;
-      const { error } = await db.from("usuarios").delete().eq("id", testUsuario.id);
-      expect(error).toBeNull();
+      if (!tabelasInfo.usuarios) return;
+      await prisma.usuario.delete({ where: { id: testUsuario.id } });
     });
   });
 
@@ -447,28 +397,27 @@ describe("Integração com Supabase", () => {
     };
 
     it("CREATE - insere permissão", async () => {
-      if (!tabelasInfo.permissoes?.exists) return;
-      const { error } = await db.from("permissoes").insert(testPermissao);
-      expect(error).toBeNull();
+      if (!tabelasInfo.permissoes) return;
+      await prisma.permissao.create({ data: testPermissao });
     });
 
     it("READ - lista permissões", async () => {
-      if (!tabelasInfo.permissoes?.exists) return;
-      const { data, error } = await db.from("permissoes").select("*").limit(1);
-      expect(error).toBeNull();
-      expect(data).toBeDefined();
+      if (!tabelasInfo.permissoes) return;
+      const data = await prisma.permissao.findMany({ take: 1 });
+      expect(data.length).toBeGreaterThan(0);
     });
 
     it("UPDATE - altera escrita", async () => {
-      if (!tabelasInfo.permissoes?.exists) return;
-      const { error } = await db.from("permissoes").update({ escrita: false }).eq("id", testPermissao.id);
-      expect(error).toBeNull();
+      if (!tabelasInfo.permissoes) return;
+      await prisma.permissao.update({
+        where: { id: testPermissao.id },
+        data: { escrita: false },
+      });
     });
 
     it("DELETE - remove permissão", async () => {
-      if (!tabelasInfo.permissoes?.exists) return;
-      const { error } = await db.from("permissoes").delete().eq("id", testPermissao.id);
-      expect(error).toBeNull();
+      if (!tabelasInfo.permissoes) return;
+      await prisma.permissao.delete({ where: { id: testPermissao.id } });
     });
   });
 
@@ -476,35 +425,19 @@ describe("Integração com Supabase", () => {
 
   describe("Funções do database.ts", () => {
     it("listLancamentos retorna array", async () => {
-      if (!tabelasInfo.lancamentos?.exists) return;
+      if (!tabelasInfo.lancamentos) return;
       const { listLancamentos } = await import("@/services/database");
       const result = await listLancamentos();
       expect(Array.isArray(result)).toBe(true);
     });
 
     it("listCategorias retorna objeto com grupos", async () => {
-      if (!tabelasInfo.categorias?.exists) return;
+      if (!tabelasInfo.categorias) return;
       const { listCategorias } = await import("@/services/database");
       const result = await listCategorias();
       expect(result).toHaveProperty("receitas");
       expect(result).toHaveProperty("custos");
       expect(result).toHaveProperty("despesas");
     });
-
-    const tabelasFaltantesDB = [
-      "listTecnicos", "listServicos", "listColaboradores",
-      "listServicosCadastro", "listMetas", "listUsuarios", "listPermissoes"
-    ];
-
-    const TABELAS_FALTA = Object.values(tabelasInfo)
-      .filter(t => t.name !== "lancamentos" && t.name !== "categorias" && !t.exists)
-      .map(t => t.name);
-
-    if (TABELAS_FALTA.length > 0) {
-      it.skip.each(TABELAS_FALTA)(
-        "⚠️  Tabela '%s' não existe — execute sql/002_create_new_tables.sql",
-        () => { }
-      );
-    }
   });
 });

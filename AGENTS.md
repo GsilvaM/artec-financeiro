@@ -11,16 +11,25 @@
 
 <!-- LOVABLE:END -->
 
-## Database Setup
+## Database
 
-> [!IMPORTANT]
-> The 7 new CRUD tables (tecnicos, servicos, colaboradores, servicos_cadastro, metas, usuarios, permissoes) defined in `sql/002_create_new_tables.sql` need to be created manually in Supabase SQL editor for data persistence across reloads. The pages work with local state via TanStack Query optimistic updates either way.
+This project uses **Prisma ORM** with `@prisma/client` (legacy `prisma-client-js` generator) connecting to Supabase PostgreSQL via the `@prisma/adapter-pg` adapter.
+
+- Schema: `prisma/schema.prisma` — 9 models (PascalCase) mapping to snake_case tables via `@@map`/`@map`
+- Config: `prisma.config.ts` — loads `.env` via `dotenv`, defines `DATABASE_URL` for Prisma CLI
+- Runtime connection: `src/services/prisma.ts` — singleton `getPrisma()` using `PrismaPg` adapter + URL from env
+- Database layer: `src/services/database.ts` — all `list*` and `replaceAll*` functions use Prisma
+- Supabase client (`@supabase/supabase-js`) is still used for **Auth** (`src/lib/supabase.ts`) and **migrations** (`src/services/migrations.ts`)
+
+### Prisma 7 notes
+- Constructor accepts `{ adapter }` or `{ accelerateUrl }` — NOT `datasources` or `datasourceUrl`
+- `url` property in `schema.prisma` datasource block is **not supported** by Prisma 7 CLI; use `prisma.config.ts` instead
+- Use `npx prisma generate` to regenerate client after schema changes
+- Decimal fields come back as `number`; `listLancamentos` uses `Number(r.valor)` to guarantee number type
 
 ## Quick Start
 
 - `npm run dev` — start dev server
-- `npm test` — run test suite
+- `npm test` — run test suite (200 tests, 16 files)
 - `npm run build` — full build (client + SSR + Nitro)
-- Default login: `admin` / `admin123`
-- Tests: 158 tests across 15 files, all passing
-- 7 CRUD pages: tecnicos, servicos, colaboradores, servicos-cadastro, metas, usuarios, permissoes
+- Default login: `admin` / `admin123
